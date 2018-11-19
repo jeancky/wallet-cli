@@ -932,6 +932,14 @@ public class WalletApi {
     return rpcCli.getAssetIssueByName(assetName);
   }
 
+  public static Optional<AssetIssueList> getAssetIssueListByName(String assetName) {
+    return rpcCli.getAssetIssueListByName(assetName);
+  }
+
+  public static AssetIssueContract getAssetIssueById(String assetId) {
+    return rpcCli.getAssetIssueById(assetId);
+  }
+
   public static GrpcAPI.NumberMessage getTotalTransaction() {
     return rpcCli.getTotalTransaction();
   }
@@ -1056,9 +1064,9 @@ public class WalletApi {
     return builder.build();
   }
 
-  public boolean unfreezeBalance(int resourceCode)
+  public boolean unfreezeBalance(int resourceCode,String receiverAddress)
       throws CipherException, IOException, CancelException {
-    Contract.UnfreezeBalanceContract contract = createUnfreezeBalanceContract(resourceCode);
+    Contract.UnfreezeBalanceContract contract = createUnfreezeBalanceContract(resourceCode,receiverAddress);
     if (rpcVersion == 2) {
       TransactionExtention transactionExtention = rpcCli.createTransaction2(contract);
       return processTransactionExtention(transactionExtention);
@@ -1071,12 +1079,18 @@ public class WalletApi {
 
 
 
-  private UnfreezeBalanceContract createUnfreezeBalanceContract(int resourceCode) {
+  private UnfreezeBalanceContract createUnfreezeBalanceContract(int resourceCode,String receiverAddress) {
     byte[] address = getAddress();
     Contract.UnfreezeBalanceContract.Builder builder = Contract.UnfreezeBalanceContract
         .newBuilder();
     ByteString byteAddreess = ByteString.copyFrom(address);
     builder.setOwnerAddress(byteAddreess).setResourceValue(resourceCode);
+
+    if(receiverAddress != null && !receiverAddress.equals("")){
+      ByteString receiverAddressBytes = ByteString.copyFrom(
+          Objects.requireNonNull(WalletApi.decodeFromBase58Check(receiverAddress)));
+      builder.setReceiverAddress(receiverAddressBytes);
+    }
 
     return builder.build();
   }
@@ -1489,8 +1503,8 @@ public class WalletApi {
      CreateSmartContract.Builder createSmartContractBuilder = CreateSmartContract.newBuilder();
     createSmartContractBuilder.setOwnerAddress(ByteString.copyFrom(address)).
         setNewContract(builder.build());
-     if (tokenId != null && tokenId != ""){
-       createSmartContractBuilder.setCallTokenValue(tokenValue).setTokenId(tokenId);
+     if (tokenId != null && !tokenId.equalsIgnoreCase("") && !tokenId.equalsIgnoreCase("#")){
+       createSmartContractBuilder.setCallTokenValue(tokenValue).setTokenId(Long.parseLong(tokenId));
     }
     return createSmartContractBuilder.build();
   }
@@ -1532,9 +1546,9 @@ public class WalletApi {
     builder.setContractAddress(ByteString.copyFrom(contractAddress));
     builder.setData(ByteString.copyFrom(data));
     builder.setCallValue(callValue);
-    if (tokenId != null) {
+    if (tokenId != null && tokenId != "") {
       builder.setCallTokenValue(tokenValue);
-      builder.setTokenId(tokenId);
+      builder.setTokenId(Long.parseLong(tokenId));
     }
     return builder.build();
   }

@@ -415,6 +415,7 @@ public class Client {
     }
   }
 
+  // use id instead of name in 3.2 version.
   private void getAssetIssueByName(String[] parameters) {
     if (parameters == null || parameters.length != 1) {
       System.out.println("GetAssetIssueByName needs 1 parameter like following: ");
@@ -427,7 +428,40 @@ public class Client {
     if (assetIssueContract != null) {
       logger.info("\n" + Utils.printAssetIssue(assetIssueContract));
     } else {
-      logger.info("GetAssetIssueByName " + " failed !!");
+      logger.info("getAssetIssueByName " + " failed !!");
+    }
+  }
+
+  private void getAssetIssueListByName(String[] parameters) {
+    if (parameters == null || parameters.length != 1) {
+      System.out.println("getAssetIssueListByName needs 1 parameter like following: ");
+      System.out.println("getAssetIssueListByName AssetName ");
+      return;
+    }
+    String assetName = parameters[0];
+
+    Optional<AssetIssueList> result = WalletApi.getAssetIssueListByName(assetName);
+    if (result.isPresent()) {
+      AssetIssueList assetIssueList = result.get();
+      logger.info(Utils.printAssetIssueList(assetIssueList));
+    } else {
+      logger.info("getAssetIssueListByName " + " failed !!");
+    }
+  }
+
+  private void getAssetIssueById(String[] parameters) {
+    if (parameters == null || parameters.length != 1) {
+      System.out.println("getAssetIssueById needs 1 parameter like following: ");
+      System.out.println("getAssetIssueById AssetId ");
+      return;
+    }
+    String assetId = parameters[0];
+
+    AssetIssueContract assetIssueContract = WalletApi.getAssetIssueById(assetId);
+    if (assetIssueContract != null) {
+      logger.info("\n" + Utils.printAssetIssue(assetIssueContract));
+    } else {
+      logger.info("getAssetIssueById " + " failed !!");
     }
   }
 
@@ -739,7 +773,6 @@ public class Client {
   }
 
 
-
   private void listNodes() {
     Optional<NodeList> result = walletApiWrapper.listNodes();
     if (result.isPresent()) {
@@ -912,26 +945,35 @@ public class Client {
 
   private void unfreezeBalance(String[] parameters)
       throws IOException, CipherException, CancelException {
-    if (parameters.length > 1) {
+    if (parameters.length > 2) {
       System.out.println("Use unfreezeBalance command with below syntax: ");
-      System.out.println("unfreezeBalance  [ResourceCode:0 BANDWIDTH,1 CPU]");
+      System.out.println("unfreezeBalance  [ResourceCode:0 BANDWIDTH,1 CPU]" + "[receiverAddress]");
       return;
     }
 
     int resourceCode = 0;
-    if (parameters != null && parameters.length == 1) {
-      resourceCode = Integer.parseInt(parameters[0]);
+    String receiverAddress = null;
+
+    if (parameters.length == 1) {
+      try {
+        resourceCode = Integer.parseInt(parameters[0]);
+      } catch (Exception ex) {
+        receiverAddress = parameters[0];
+      }
     }
 
-    boolean result = walletApiWrapper.unfreezeBalance(resourceCode);
+    if (parameters.length == 2) {
+      resourceCode = Integer.parseInt(parameters[0]);
+      receiverAddress = parameters[1];
+    }
+
+    boolean result = walletApiWrapper.unfreezeBalance(resourceCode, receiverAddress);
     if (result) {
       logger.info("unfreezeBalance " + " successful !!");
     } else {
       logger.info("unfreezeBalance " + " failed !!");
     }
   }
-
-
 
 
   private void unfreezeAsset() throws IOException, CipherException, CancelException {
@@ -1031,7 +1073,7 @@ public class Client {
 
   private void getDelegatedResource(String[] parameters)
       throws IOException, CipherException, CancelException {
-    if (parameters == null ||parameters.length != 2) {
+    if (parameters == null || parameters.length != 2) {
       System.out.println("Use getDelegatedResource command with below syntax: ");
       System.out.println("getDelegatedResource fromAddress toAddress");
       return;
@@ -1049,13 +1091,14 @@ public class Client {
 
   private void getDelegatedResourceAccountIndex(String[] parameters)
       throws IOException, CipherException, CancelException {
-    if (parameters == null ||parameters.length != 1) {
+    if (parameters == null || parameters.length != 1) {
       System.out.println("Use getDelegatedResourceAccountIndex command with below syntax: ");
       System.out.println("getDelegatedResourceAccountIndex address ");
       return;
     }
     String address = parameters[0];
-    Optional<DelegatedResourceAccountIndex> result = WalletApi.getDelegatedResourceAccountIndex(address);
+    Optional<DelegatedResourceAccountIndex> result = WalletApi
+        .getDelegatedResourceAccountIndex(address);
     if (result.isPresent()) {
       DelegatedResourceAccountIndex delegatedResourceAccountIndex = result.get();
       logger.info(Utils.printDelegatedResourceAccountIndex(delegatedResourceAccountIndex));
@@ -1063,9 +1106,6 @@ public class Client {
       logger.info("getDelegatedResourceAccountIndex " + " failed !!");
     }
   }
-
-
-
 
 
   private void exchangeCreate(String[] parameters)
@@ -1595,7 +1635,7 @@ public class Client {
     value = Long.valueOf(parameters[idx++]);
     long tokenValue = Long.valueOf(parameters[idx++]);
     String tokenId = parameters[idx++];
-    if (tokenId == "#"){
+    if (tokenId == "#") {
       tokenId = "";
     }
     String libraryAddressPair = null;
@@ -1644,7 +1684,8 @@ public class Client {
     byte[] input = Hex.decode(AbiUtil.parseMethod(methodStr, argsStr, isHex));
     byte[] contractAddress = WalletApi.decodeFromBase58Check(contractAddrStr);
 
-    boolean result = walletApiWrapper.callContract(contractAddress, callValue, input, feeLimit, tokenCallValue, tokenId);
+    boolean result = walletApiWrapper
+        .callContract(contractAddress, callValue, input, feeLimit, tokenCallValue, tokenId);
     if (result) {
       System.out.println("Broadcast the triggerContract successfully.\n"
           + "Please check the given transaction id to get the result on blockchain using getTransactionInfoById command");
@@ -1713,6 +1754,8 @@ public class Client {
     System.out.println("GetAccountNet");
     System.out.println("GetAccountResource");
     System.out.println("GetAssetIssueByName");
+    System.out.println("GetAssetIssueListByName");
+    System.out.println("GetAssetIssueById");
     System.out.println("SendCoin");
     System.out.println("TransferAsset");
     System.out.println("ParticipateAssetIssue");
@@ -1918,6 +1961,14 @@ public class Client {
           }
           case "getassetissuebyname": {
             getAssetIssueByName(parameters);
+            break;
+          }
+          case "getassetissuelistbyname": {
+            getAssetIssueListByName(parameters);
+            break;
+          }
+          case "getassetissuebyid": {
+            getAssetIssueById(parameters);
             break;
           }
           case "sendcoin": {

@@ -537,10 +537,24 @@ public class GrpcClient {
   }
 
 
+  // equal to getAssetIssueById
   public Contract.AssetIssueContract getAssetIssueByName(String assetName) {
     ByteString assetNameBs = ByteString.copyFrom(assetName.getBytes());
     BytesMessage request = BytesMessage.newBuilder().setValue(assetNameBs).build();
-    return blockingStubFull.getAssetIssueByName(request);
+    return blockingStubFull.getAssetIssueById(request);
+  }
+
+  public Optional<AssetIssueList> getAssetIssueListByName(String assetName) {
+    ByteString assetNameBs = ByteString.copyFrom(assetName.getBytes());
+    BytesMessage request = BytesMessage.newBuilder().setValue(assetNameBs).build();
+    AssetIssueList assetIssueList = blockingStubFull.getAssetIssueListByName(request);
+    return Optional.ofNullable(assetIssueList);
+  }
+
+  public Contract.AssetIssueContract getAssetIssueById(String assetId) {
+    ByteString assetIdBs = ByteString.copyFrom(assetId.getBytes());
+    BytesMessage request = BytesMessage.newBuilder().setValue(assetIdBs).build();
+    return blockingStubFull.getAssetIssueById(request);
   }
 
   public NumberMessage getTotalTransaction() {
