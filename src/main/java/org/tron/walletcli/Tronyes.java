@@ -1,41 +1,11 @@
 package org.tron.walletcli;
 
 import com.beust.jcommander.JCommander;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.Base64.Encoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tron.api.GrpcAPI.AccountNetMessage;
-import org.tron.api.GrpcAPI.AccountResourceMessage;
-import org.tron.api.GrpcAPI.AddressPrKeyPairMessage;
-import org.tron.api.GrpcAPI.AssetIssueList;
-import org.tron.api.GrpcAPI.BlockExtention;
-import org.tron.api.GrpcAPI.BlockList;
-import org.tron.api.GrpcAPI.BlockListExtention;
-import org.tron.api.GrpcAPI.DelegatedResourceList;
-import org.tron.api.GrpcAPI.ExchangeList;
-import org.tron.api.GrpcAPI.Node;
-import org.tron.api.GrpcAPI.NodeList;
-import org.tron.api.GrpcAPI.NumberMessage;
-import org.tron.api.GrpcAPI.ProposalList;
-import org.tron.api.GrpcAPI.TransactionList;
-import org.tron.api.GrpcAPI.TransactionListExtention;
-import org.tron.api.GrpcAPI.WitnessList;
+import org.tron.api.GrpcAPI.*;
 import org.tron.common.utils.AbiUtil;
 import org.tron.common.utils.ByteArray;
 import org.tron.common.utils.Utils;
@@ -44,18 +14,18 @@ import org.tron.core.exception.CipherException;
 import org.tron.core.exception.EncodingException;
 import org.tron.keystore.StringUtils;
 import org.tron.protos.Contract.AssetIssueContract;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.Block;
-import org.tron.protos.Protocol.ChainParameters;
-import org.tron.protos.Protocol.DelegatedResourceAccountIndex;
-import org.tron.protos.Protocol.Exchange;
-import org.tron.protos.Protocol.Proposal;
-import org.tron.protos.Protocol.SmartContract;
-import org.tron.protos.Protocol.Transaction;
-import org.tron.protos.Protocol.TransactionInfo;
+import org.tron.protos.Protocol.*;
 import org.tron.walletserver.WalletApi;
 
-public class Client {
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Tronyes {
 
   private static final Logger logger = LoggerFactory.getLogger("Client");
   private WalletApiWrapper walletApiWrapper = new WalletApiWrapper();
@@ -2190,12 +2160,9 @@ public class Client {
   }
 
   public static void main(String[] args) {
-    Client cli = new Client();
-    JCommander.newBuilder()
-        .addObject(cli)
-        .build()
-        .parse(args);
+    System.out.println("Hello Tron Yes!");
 
-    cli.run();
+    Tronyes yes = new Tronyes();
+    yes.run();
   }
 }

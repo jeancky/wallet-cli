@@ -352,7 +352,6 @@ public class WalletApiWrapper {
   }
 
 
-
   public Optional<NodeList> listNodes() {
     try {
       return WalletApi.listNodes();
@@ -401,14 +400,15 @@ public class WalletApiWrapper {
     return wallet.updateAsset(description, url, newLimit, newPublicLimit);
   }
 
-  public boolean freezeBalance(long frozen_balance, long frozen_duration, int resourceCode)
+  public boolean freezeBalance(long frozen_balance, long frozen_duration, int resourceCode,
+      String receiverAddress)
       throws CipherException, IOException, CancelException {
     if (wallet == null || !wallet.isLoginState()) {
       logger.warn("Warning: freezeBalance failed, Please login first !!");
       return false;
     }
 
-    return wallet.freezeBalance(frozen_balance, frozen_duration, resourceCode);
+    return wallet.freezeBalance(frozen_balance, frozen_duration, resourceCode , receiverAddress);
   }
 
   public boolean buyStorage(long quantity)
@@ -451,6 +451,8 @@ public class WalletApiWrapper {
 
     return wallet.unfreezeBalance(resourceCode);
   }
+
+
 
   public boolean unfreezeAsset() throws CipherException, IOException, CancelException {
     if (wallet == null || !wallet.isLoginState()) {
@@ -599,26 +601,36 @@ public class WalletApiWrapper {
 
   }
 
+  public boolean updateEnergyLimit(byte[] contractAddress, long originEnergyLimit)
+      throws CipherException, IOException, CancelException {
+    if (wallet == null || !wallet.isLoginState()) {
+      logger.warn("Warning: updateSetting failed,  Please login first !!");
+      return false;
+    }
+    return wallet.updateEnergyLimit(contractAddress, originEnergyLimit);
+
+  }
+
   public boolean deployContract(String name, String abiStr, String codeStr,
-      long feeLimit, long value, long consumeUserResourcePercent, String libraryAddressPair)
+      long feeLimit, long value, long consumeUserResourcePercent, long originEnergyLimit, long tokenValue, String tokenId,String libraryAddressPair)
       throws CipherException, IOException, CancelException {
     if (wallet == null || !wallet.isLoginState()) {
       logger.warn("Warning: createContract failed,  Please login first !!");
       return false;
     }
     return wallet
-        .deployContract(name, abiStr, codeStr, feeLimit, value, consumeUserResourcePercent,
+        .deployContract(name, abiStr, codeStr, feeLimit, value, consumeUserResourcePercent, originEnergyLimit, tokenValue, tokenId,
             libraryAddressPair);
   }
 
-  public boolean callContract(byte[] contractAddress, long callValue, byte[] data, long feeLimit)
+  public boolean callContract(byte[] contractAddress, long callValue, byte[] data, long feeLimit, long tokenValue, String tokenId)
       throws CipherException, IOException, CancelException {
     if (wallet == null || !wallet.isLoginState()) {
       logger.warn("Warning: callContract failed,  Please login first !!");
       return false;
     }
 
-    return wallet.triggerContract(contractAddress, callValue, data, feeLimit);
+    return wallet.triggerContract(contractAddress, callValue, data, feeLimit, tokenValue, tokenId);
   }
 
 }
