@@ -1812,9 +1812,9 @@ public class Client {
     System.out.println("UpdateWitness");
     System.out.println("VoteWitness");
     System.out.println("WithdrawBalance");
-//    System.out.println("buyStorage");
-//    System.out.println("buyStorageBytes");
-//    System.out.println("sellStorage");
+//   System.out.println("buyStorage");
+//   System.out.println("buyStorageBytes");
+//   System.out.println("sellStorage");
 //   System.out.println("GetAssetIssueListByTimestamp");
 //   System.out.println("GetTransactionsByTimestamp");
 //   System.out.println("GetTransactionsByTimestampCount");
