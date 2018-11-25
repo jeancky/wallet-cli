@@ -1,4 +1,4 @@
-package com.tronyes.nettyrest.mysql;
+package com.demo.nettyrest.mysql;
 
 
 public enum DMLTypes {

@@ -1,4 +1,4 @@
-package com.tronyes.nettyrest.exception;
+package com.demo.nettyrest.exception;
 
 import io.netty.util.internal.StringUtil;
 

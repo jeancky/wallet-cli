@@ -1,4 +1,4 @@
-package com.tronyes.nettyrest.exception;
+package com.demo.nettyrest.exception;
 
 public class ApiException extends Exception {
   private int errNo;

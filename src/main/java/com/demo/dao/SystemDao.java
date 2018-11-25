@@ -1,8 +1,8 @@
-package com.tronyes.lottery.dao;
+package com.demo.dao;
 
-import com.tronyes.nettyrest.exception.ApiException;
-import com.tronyes.nettyrest.mysql.BaseDao;
-import com.tronyes.nettyrest.mysql.MySelect;
+import com.demo.nettyrest.exception.ApiException;
+import com.demo.nettyrest.mysql.BaseDao;
+import com.demo.nettyrest.mysql.MySelect;
 
 import java.sql.Timestamp;
 import java.util.HashMap;

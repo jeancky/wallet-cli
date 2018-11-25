@@ -1,4 +1,4 @@
-package com.tronyes.nettyrest;
+package com.demo.nettyrest;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

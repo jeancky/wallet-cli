@@ -1,9 +1,11 @@
-package com.tronyes.nettyrest.script;
+package com.demo.nettyrest.script;
 
-import com.tronyes.lottery.dao.UserRoundDao;
-import com.tronyes.nettyrest.exception.ApiException;
+import com.demo.dao.UserRoundDao;
+import com.demo.nettyrest.exception.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tron.keystore.WalletFile;
+import org.tron.walletserver.WalletApi;
 
 import java.util.*;
 
@@ -22,6 +24,9 @@ public class AwardScript {
         int limit = 10;
         int escapeCount = 0;
 
+//        WalletFile walletFile = loadWalletFile();
+//        WalletApi walletApi = new WalletApi(walletFile);
+//        byte[] to = WalletApi.decodeFromBase58Check(toAddress);
         Map<String, Object> conds = new HashMap<>();
         conds.put("bet_state = ", 10);
         conds.put("lot_val > ", 0);
