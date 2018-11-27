@@ -27,8 +27,8 @@ import org.tron.walletserver.WalletApi;
 
 public class WalletApiWrapper {
 
-  private static final Logger logger = LoggerFactory.getLogger("WalletApiWrapper");
-  private WalletApi wallet;
+  protected static final Logger logger = LoggerFactory.getLogger("WalletApiWrapper");
+  protected WalletApi wallet;
 
   public String registerWallet(char[] password) throws CipherException, IOException {
     if (!WalletApi.passwordValid(password)) {
