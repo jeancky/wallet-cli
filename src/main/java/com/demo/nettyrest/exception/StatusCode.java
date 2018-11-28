@@ -13,6 +13,7 @@ public class StatusCode {
     private static final Map<Integer, String> codeMap = new HashMap<>();
 
     public static final int CREATED_SUCCESS       = 201;
+    public static final int DB_SQL_ERR            = 202;
     public static final int UNKNOWN_ERROR         = 1000;
     public static final int API_NOT_FOUND         = 1001;
     public static final int API_CAN_NOT_BE_NULL   = 1002;
@@ -27,9 +28,11 @@ public class StatusCode {
     public static final int GAME_CLOSED = 2003;
     public static final int ADDRESS_EMPTY = 2004;
     public static final int GAME_MORE_5 = 2005;
+    public static final int DB_PSWD_EMPTY = 2006;
 
     static {
         codeMap.put(CREATED_SUCCESS, "created success");
+        codeMap.put(DB_SQL_ERR, "sql error");
         codeMap.put(UNKNOWN_ERROR, "unknown error");
         codeMap.put(API_NOT_FOUND, "the api can't be found");
         codeMap.put(API_CAN_NOT_BE_NULL, "can't request without a api name");
@@ -43,6 +46,7 @@ public class StatusCode {
         codeMap.put(GAME_CLOSED, "game is closed");
         codeMap.put(ADDRESS_EMPTY, "address is empty!");
         codeMap.put(GAME_MORE_5, "no more than 5 bet per round.");
+        codeMap.put(DB_PSWD_EMPTY, "DB password mapping not found.");
     }
 
     public static ApiException buildException(int code, String parameter){

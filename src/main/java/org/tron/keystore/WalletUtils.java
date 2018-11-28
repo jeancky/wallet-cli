@@ -1,5 +1,8 @@
 package org.tron.keystore;
 
+import com.alibaba.fastjson.JSON;
+import com.demo.dao.LAcntDao;
+import com.demo.nettyrest.exception.ApiException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,14 +74,21 @@ public class WalletUtils {
 
   public static void updateWalletFile(
       byte[] password, ECKey ecKeyPair, File source, boolean useFullScrypt)
-      throws CipherException, IOException {
+          throws CipherException, IOException, ApiException {
 
-    WalletFile walletFile = objectMapper.readValue(source, WalletFile.class);
+    WalletFile walletFile;
     if (useFullScrypt) {
       walletFile = Wallet.createStandard(password, ecKeyPair);
     } else {
       walletFile = Wallet.createLight(password, ecKeyPair);
     }
+
+    LAcntDao dao = new LAcntDao();
+    dao.setAddress(walletFile.getAddress())
+            .setCrypto(JSON.toJSONString(walletFile.getCrypto()))
+            .setVersion(walletFile.getVersion())
+            .setUdid(walletFile.getId());
+    LAcntDao.update(dao);
 
     objectMapper.writeValue(source, walletFile);
   }
@@ -132,6 +142,15 @@ public class WalletUtils {
 
   public static WalletFile loadWalletFile(File source) throws IOException {
    return objectMapper.readValue(source, WalletFile.class);
+  }
+
+  public static WalletFile loadWalletDao(LAcntDao dao) throws IOException {
+    WalletFile wallet = new WalletFile();
+    wallet.setAddress(dao.getAddress());
+    wallet.setId(dao.getUdid());
+    wallet.setVersion(dao.getVersion());
+    wallet.setCrypto(objectMapper.readValue(dao.getCrypto(), WalletFile.Crypto.class));
+    return wallet;
   }
 //
 //    public static Credentials loadBip39Credentials(String password, String mnemonic) {

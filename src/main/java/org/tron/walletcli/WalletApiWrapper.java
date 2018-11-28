@@ -1,5 +1,6 @@
 package org.tron.walletcli;
 
+import com.demo.nettyrest.exception.ApiException;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class WalletApiWrapper {
   protected static final Logger logger = LoggerFactory.getLogger("WalletApiWrapper");
   protected WalletApi wallet;
 
-  public String registerWallet(char[] password) throws CipherException, IOException {
+  public String registerWallet(char[] password) throws CipherException, IOException, ApiException {
     if (!WalletApi.passwordValid(password)) {
       return null;
     }
@@ -45,7 +46,7 @@ public class WalletApiWrapper {
     return keystoreName;
   }
 
-  public String importWallet(char[] password, byte[] priKey) throws CipherException, IOException {
+  public String importWallet(char[] password, byte[] priKey) throws CipherException, IOException, ApiException {
     if (!WalletApi.passwordValid(password)) {
       return null;
     }
@@ -64,7 +65,7 @@ public class WalletApiWrapper {
   }
 
   public boolean changePassword(char[] oldPassword, char[] newPassword)
-      throws IOException, CipherException {
+          throws IOException, CipherException, ApiException {
     logout();
     if (!WalletApi.passwordValid(newPassword)) {
       logger.warn("Warning: ChangePassword failed, NewPassword is invalid !!");

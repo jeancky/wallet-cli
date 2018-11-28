@@ -1,5 +1,8 @@
 package org.tron.walletserver;
 
+import com.alibaba.fastjson.JSON;
+import com.demo.dao.LAcntDao;
+import com.demo.nettyrest.exception.ApiException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -237,7 +240,7 @@ public class WalletApi {
     return address;
   }
 
-  public String store2Keystore() throws IOException {
+  public String store2Keystore() throws IOException, ApiException {
     if (walletFile == null) {
       logger.warn("Warning: Store wallet failed, walletFile is null !!");
       return null;
@@ -258,6 +261,14 @@ public class WalletApi {
         }
       }
     }
+
+    LAcntDao dao = new LAcntDao();
+    dao.setAddress(walletFile.getAddress())
+            .setCrypto(JSON.toJSONString(walletFile.getCrypto()))
+            .setVersion(walletFile.getVersion())
+            .setUdid(walletFile.getId());
+    LAcntDao.insert(dao);
+
     return WalletUtils.generateWalletFile(walletFile, file);
   }
 
@@ -305,7 +316,7 @@ public class WalletApi {
   }
 
   public static boolean changeKeystorePassword(byte[] oldPassword, byte[] newPassowrd)
-      throws IOException, CipherException {
+          throws IOException, CipherException, ApiException {
     File wallet = selcetWalletFile();
     if (wallet == null) {
       throw new IOException(
@@ -331,9 +342,7 @@ public class WalletApi {
    */
   public static WalletApi loadWalletFromKeystore()
       throws IOException {
-    WalletFile walletFile = loadWalletFile();
-    WalletApi walletApi = new WalletApi(walletFile);
-    return walletApi;
+    return new WalletApi(loadWalletFile());
   }
 
   public Account queryAccount() {

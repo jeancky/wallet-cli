@@ -16,6 +16,8 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.demo.nettyrest.exception.ApiException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
@@ -119,7 +121,7 @@ public class Client {
     return result;
   }
 
-  private void registerWallet() throws CipherException, IOException {
+  private void registerWallet() throws CipherException, IOException, ApiException {
     char[] password = inputPassword2Twice();
     String fileName = walletApiWrapper.registerWallet(password);
     StringUtils.clear(password);
@@ -131,7 +133,7 @@ public class Client {
     logger.info("Register a wallet successful, keystore file name is " + fileName);
   }
 
-  private void importWallet() throws CipherException, IOException {
+  private void importWallet() throws CipherException, IOException, ApiException {
     char[] password = inputPassword2Twice();
     byte[] priKey = inputPrivateKey();
 
@@ -146,7 +148,7 @@ public class Client {
     System.out.println("Import a wallet successful, keystore file name is " + fileName);
   }
 
-  private void importwalletByBase64() throws CipherException, IOException {
+  private void importwalletByBase64() throws CipherException, IOException, ApiException {
     char[] password = inputPassword2Twice();
     byte[] priKey = inputPrivateKey64();
 
@@ -161,7 +163,7 @@ public class Client {
     System.out.println("Import a wallet successful, keystore file name is " + fileName);
   }
 
-  private void changePassword() throws IOException, CipherException {
+  private void changePassword() throws IOException, CipherException, ApiException {
     System.out.println("Please input old password.");
     char[] oldPassword = Utils.inputPassword(false);
     System.out.println("Please input new password.");

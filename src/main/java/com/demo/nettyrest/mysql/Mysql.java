@@ -1,5 +1,7 @@
 package com.demo.nettyrest.mysql;
 
+import com.demo.nettyrest.exception.ApiException;
+import com.demo.nettyrest.exception.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,7 +164,7 @@ public class Mysql {
      * @param params
      * @return
      */
-    public static int delete(String sql, Object... params) {
+    public static int delete(String sql, Object... params) throws ApiException {
         return update(sql, params);
     }
 
@@ -173,16 +175,12 @@ public class Mysql {
      * @param params
      * @return
      */
-    public static int update(String sql, Object... params) {
+    public static int update(String sql, Object... params) throws ApiException {
 
         if (!sql.toLowerCase().startsWith(DMLTypes.DELETE.toString().toLowerCase())
                 && !sql.toLowerCase().startsWith(DMLTypes.UPDATE.toString().toLowerCase())
                 && !sql.toLowerCase().startsWith(DMLTypes.REPLACE.toString().toLowerCase())) {
-            try {
-                throw new Exception("update statement needed");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            throw new ApiException(StatusCode.DB_SQL_ERR, "update statement needed");
         }
 
         int paramSize = getParameterNum(sql,params);
@@ -201,7 +199,8 @@ public class Mysql {
 
             row = statement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("sql error",e);
+            e.printStackTrace();
+            throw new ApiException(StatusCode.DB_SQL_ERR, e.getLocalizedMessage());
         } finally {
             JdbcPool.release(conn, statement, null);
         }

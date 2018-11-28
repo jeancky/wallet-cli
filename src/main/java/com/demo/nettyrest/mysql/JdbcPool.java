@@ -28,7 +28,7 @@ public class JdbcPool {
 
     static {
         try {
-            readWriteSeparate = Config.getBoolean("mysql.readwite.separate");
+            readWriteSeparate = false;
 
             Properties writeProp = new Properties();
             writeProp.load(new InputStreamReader(JdbcPool.class.getResourceAsStream("/write.db.properties"), "UTF-8"));

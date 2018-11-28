@@ -1,5 +1,9 @@
 package org.tron.walletserver;
 
+import com.demo.dao.LAcntDao;
+import com.demo.nettyrest.exception.ApiException;
+import com.demo.nettyrest.exception.StatusCode;
+import com.google.protobuf.Api;
 import com.google.protobuf.ByteString;
 import com.typesafe.config.Config;
 import org.slf4j.Logger;
@@ -23,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -63,7 +68,20 @@ public class AutoClient {
         return rpcVersion;
     }
 
-    public void loadWallet(byte[] password, int index) throws CipherException, IOException{
+    public void loadWalletDao(String pswd, Integer id) throws CipherException, IOException, ApiException {
+
+        LAcntDao dao = LAcntDao.getById(id);
+        if (dao == null) {
+            throw new ApiException(StatusCode.ADDRESS_EMPTY);
+        }
+
+        WalletFile walletFile = WalletUtils.loadWalletDao(dao);
+        this.address = decodeFromBase58Check(walletFile.getAddress());
+        this.ecKey = Wallet.decrypt(pswd.getBytes(), walletFile);
+    }
+
+    public void loadWalletFile(int index, String pswd) throws CipherException, IOException{
+        byte[] password = pswd.getBytes();
         File file = new File(FilePath);
         if (!file.exists() || !file.isDirectory()) {
             throw new IOException("No keystore file found, please use registerwallet or importwallet first!");
@@ -171,22 +189,23 @@ public class AutoClient {
         return rpcCli.getTransactionInfoById(txID);
     }
 
-//    public static void main(String[] args) {
-//        AutoClient cli = new AutoClient();
-//        try {
-//            cli.loadWallet("Star@2018".getBytes(), 0);
-//            byte[] input = Hex.decode(AbiUtil.parseMethod("ca(address,uint16)", "\"TMfnsYJJfkNCUhWEcT25aG6uEbToQfoyXG\",20", false));
-//            String txId = cli.triggerContract("TC1tzxXDV63YJXsd4ho5kVL6APhRg533Wz", 0, input, 1000000000, 0, null);
-//
-//            Optional<TransactionInfo> result = cli.getTransactionInfoById(txId);
-//            if (result.isPresent()) {
-//                TransactionInfo transactionInfo = result.get();
-//                logger.info(Utils.printTransactionInfo(transactionInfo));
-//            } else {
-//                logger.info("getTransactionInfoById " + " failed !!");
-//            }
-//        }catch (EncodingException | IOException | CipherException e){
-//            System.out.println(e);
-//        }
-//    }
+    public static void main(String[] args) {
+        AutoClient cli = new AutoClient();
+        try {
+//            cli.loadWalletFile(0, "Star@2018");
+            cli.loadWalletDao("Star@2018", 1);
+            byte[] input = Hex.decode(AbiUtil.parseMethod("ca(address,uint16)", "\"TMfnsYJJfkNCUhWEcT25aG6uEbToQfoyXG\",20", false));
+            String txId = cli.triggerContract("TC1tzxXDV63YJXsd4ho5kVL6APhRg533Wz", 0, input, 1000000000, 0, null);
+
+            Optional<TransactionInfo> result = cli.getTransactionInfoById(txId);
+            if (result.isPresent()) {
+                TransactionInfo transactionInfo = result.get();
+                logger.info(Utils.printTransactionInfo(transactionInfo));
+            } else {
+                logger.info("getTransactionInfoById " + " failed !!");
+            }
+        }catch (EncodingException | IOException | CipherException | ApiException e){
+            System.out.println(e);
+        }
+    }
 }
