@@ -3,7 +3,6 @@ package org.tron.walletserver;
 import com.demo.dao.LAcntDao;
 import com.demo.nettyrest.exception.ApiException;
 import com.demo.nettyrest.exception.StatusCode;
-import com.google.protobuf.Api;
 import com.google.protobuf.ByteString;
 import com.typesafe.config.Config;
 import org.slf4j.Logger;
@@ -21,13 +20,9 @@ import org.tron.keystore.*;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol.*;
 import org.tron.protos.Protocol.Transaction.Result;
-import org.tron.walletcli.Client;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 
 

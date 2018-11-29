@@ -51,8 +51,8 @@ public class LAcntDao extends BaseDao {
         if (dao.getVersion() != null){
             values.put("version", dao.getVersion());
         }
-        if (!StringUtil.isNullOrEmpty(dao.getCrypto())){
-            values.put("crypto", dao.getCrypto());
+        if (!StringUtil.isNullOrEmpty(dao.crypto)){
+            values.put("crypto", dao.crypto);
         }
         if (dao.getState() != null){
             values.put("state", dao.getState());
@@ -77,8 +77,8 @@ public class LAcntDao extends BaseDao {
         if (dao.getVersion() != null){
             values.put("version", dao.getVersion());
         }
-        if (!StringUtil.isNullOrEmpty(dao.getCrypto())){
-            values.put("crypto", dao.getCrypto());
+        if (!StringUtil.isNullOrEmpty(dao.crypto)){
+            values.put("crypto", dao.crypto);
         }
         if (dao.getState() != null){
             values.put("state", dao.getState());
