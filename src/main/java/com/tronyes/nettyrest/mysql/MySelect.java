@@ -1,4 +1,4 @@
-package com.demo.nettyrest.mysql;
+package com.tronyes.nettyrest.mysql;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

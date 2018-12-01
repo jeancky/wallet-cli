@@ -1,4 +1,4 @@
-package com.demo.nettyrest.mysql;
+package com.tronyes.nettyrest.mysql;
 
 import java.lang.annotation.*;
 

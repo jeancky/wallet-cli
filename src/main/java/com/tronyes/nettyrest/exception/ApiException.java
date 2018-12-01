@@ -1,4 +1,4 @@
-package com.demo.nettyrest.exception;
+package com.tronyes.nettyrest.exception;
 
 public class ApiException extends Exception {
   private int errNo;
@@ -12,7 +12,7 @@ public class ApiException extends Exception {
   }
 
   public ApiException(int errNo) {
-    super(StatusCode.getMessage(errNo));
+    super(com.tronyes.nettyrest.exception.StatusCode.getMessage(errNo));
     this.errNo = errNo;
   }
 

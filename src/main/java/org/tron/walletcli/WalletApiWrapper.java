@@ -1,6 +1,6 @@
 package org.tron.walletcli;
 
-import com.demo.nettyrest.exception.ApiException;
+import com.tronyes.nettyrest.exception.ApiException;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.util.HashMap;

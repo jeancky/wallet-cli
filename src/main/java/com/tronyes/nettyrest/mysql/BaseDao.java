@@ -1,7 +1,7 @@
-package com.demo.nettyrest.mysql;
+package com.tronyes.nettyrest.mysql;
 
-import com.demo.nettyrest.exception.ApiException;
-import com.demo.nettyrest.exception.StatusCode;
+import com.tronyes.nettyrest.exception.ApiException;
+import com.tronyes.nettyrest.exception.StatusCode;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang3.ArrayUtils;
 

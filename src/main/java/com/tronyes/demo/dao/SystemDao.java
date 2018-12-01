@@ -1,8 +1,8 @@
-package com.demo.dao;
+package org.tron.dao;
 
-import com.demo.nettyrest.exception.ApiException;
-import com.demo.nettyrest.mysql.BaseDao;
-import com.demo.nettyrest.mysql.MySelect;
+import com.tronyes.nettyrest.exception.ApiException;
+import com.tronyes.nettyrest.mysql.BaseDao;
+import com.tronyes.nettyrest.mysql.MySelect;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -29,9 +29,9 @@ public class SystemDao extends BaseDao {
         return getOne(qs, conds);
     }
 
-    public static int saveByKey(Integer key, Integer val_int) throws ApiException {
+    public static int saveByKey(Integer key, long val_int) throws ApiException {
         Map<String, Object> values = new HashMap<>();
-        values.put("val_int = ", val_int);
+        values.put("val_int", val_int);
 
         Map<String, Object> conds = new HashMap<>();
         conds.put("`key` = ", key);

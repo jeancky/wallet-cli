@@ -1,7 +1,7 @@
-package com.demo.nettyrest.mysql;
+package com.tronyes.nettyrest.mysql;
 
-import com.demo.nettyrest.exception.ApiException;
-import com.demo.nettyrest.exception.StatusCode;
+import com.tronyes.nettyrest.exception.ApiException;
+import com.tronyes.nettyrest.exception.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,6 +1,5 @@
-package com.demo.nettyrest.mysql;
+package com.tronyes.nettyrest.mysql;
 
-import com.demo.nettyrest.Config;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

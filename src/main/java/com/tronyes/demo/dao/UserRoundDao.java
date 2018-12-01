@@ -1,8 +1,9 @@
-package com.demo.dao;
+package org.tron.dao;
 
-import com.demo.nettyrest.exception.ApiException;
-import com.demo.nettyrest.mysql.BaseDao;
-import com.demo.nettyrest.mysql.MySelect;
+import com.tronyes.nettyrest.exception.ApiException;
+import com.tronyes.nettyrest.exception.StatusCode;
+import com.tronyes.nettyrest.mysql.BaseDao;
+import com.tronyes.nettyrest.mysql.MySelect;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -25,8 +26,10 @@ public class UserRoundDao extends BaseDao {
     private Long lot_val;
     private String lot_num;
     private Integer rwd_state;
+    private Timestamp rwd_t;
     private String rwd_err;
     private Timestamp c_t;
+    private Timestamp u_t;
 
     public static Long insert(Map<String, Object> values, String onDup) throws ApiException {
         return insert((String)qs.get(KEY_TABLENAME), values, onDup);
@@ -34,17 +37,30 @@ public class UserRoundDao extends BaseDao {
 
     public static List<UserRoundDao> getUserGameRoundList(Long uid, Long gr_id) throws ApiException {
         Map<String, Object> conds = new HashMap<>();
-        conds.put("uid = ", uid);
+        conds.put("u_id = ", uid);
         conds.put("gr_id = ", gr_id);
-        return getListByCond(conds, " id DESC ", 10, 0);
+        return getListByCond(conds, " id DESC ", 10);
     }
 
-    public static List<UserRoundDao> getListByCond(Map<String, Object>conds, String orderBy, Integer limit, Integer start) throws ApiException {
-        return getList(qs, conds, orderBy, limit, start);
+    public static int updateById(Map<String, Object> values, Long id) throws ApiException {
+        if (id == null || id <= 0){
+            throw StatusCode.buildException(StatusCode.PARAM_ERROR, "DB id");
+        }
+        Map<String, Object> conds = new HashMap<>();
+        conds.put("id = ", id);
+        return update(qs, values, conds);
+    }
+
+    public static List<UserRoundDao> getListByCond(Map<String, Object>conds, String orderBy, Integer limit) throws ApiException {
+        return getList(qs, conds, orderBy, limit);
     }
 
     public static UserRoundDao getById(Long iid) throws ApiException {
         return getOne(qs, iid);
+    }
+
+    public static UserRoundDao getByCond(Map<String, Object> conds, String orderBy) throws ApiException {
+        return getOne(qs, conds, orderBy);
     }
 
     public static Map<String, Object> packageUserRound(UserRoundDao dao) {
@@ -68,7 +84,7 @@ public class UserRoundDao extends BaseDao {
     static {
         qs.put(KEY_TABLENAME, "m_user_round");
         qs.put(KEY_DBSELECTOR, new MySelect<>(new UserRoundDao()));
-        qs.put(KEY_COLUMNS, new String[]{"id", "gr_id", "u_id", "address", "bet_state", "bet_id", "bet_val", "bet_tx", "lot_type", "lot_tx", "lot_val", "bet_num", "lot_num", "rwd_state", "rwd_err", "c_t", "u_t"});
+        qs.put(KEY_COLUMNS, new String[]{"id", "gr_id", "u_id", "address", "bet_state", "bet_id", "bet_val", "bet_tx", "lot_type", "lot_tx", "lot_val", "bet_num", "lot_num", "rwd_state", "rwd_t", "rwd_err", "c_t", "u_t"});
     }
 
     //////////////////////////////
@@ -213,6 +229,24 @@ public class UserRoundDao extends BaseDao {
 
     public UserRoundDao setC_t(Timestamp c_t) {
         this.c_t = c_t;
+        return this;
+    }
+
+    public Timestamp getRwd_t() {
+        return rwd_t;
+    }
+
+    public UserRoundDao setRwd_t(Timestamp rwd_t) {
+        this.rwd_t = rwd_t;
+        return this;
+    }
+
+    public Timestamp getU_t() {
+        return u_t;
+    }
+
+    public UserRoundDao setU_t(Timestamp u_t) {
+        this.u_t = u_t;
         return this;
     }
 }

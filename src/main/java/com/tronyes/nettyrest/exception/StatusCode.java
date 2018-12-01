@@ -1,7 +1,7 @@
-package com.demo.nettyrest.exception;
+package com.tronyes.nettyrest.exception;
 
 import io.netty.util.internal.StringUtil;
-
+import com.tronyes.nettyrest.exception.ApiException;
 import java.util.HashMap;
 import java.util.Map;
 
