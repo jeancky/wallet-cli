@@ -12,6 +12,7 @@ import org.tron.core.exception.EncodingException;
 import org.tron.walletserver.AutoClient;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -52,7 +53,7 @@ public class AwdJob implements org.quartz.Job {
                 if (dao == null) {
                     break;
                 }
-                String params = String.format("\"%s\",\"%s\",%ld,%ld", dao.getBet_id(), dao.getAddress(), dao.getBet_val(), dao.getLot_val());
+                String params = String.format("\"%s\",\"%s\",%d,%d", dao.getBet_id(), dao.getAddress(), dao.getBet_val(), dao.getLot_val());
                 byte[] input = Hex.decode(AbiUtil.parseMethod("rr(bytes32,address,uint256,uint256)", params, false));
                 String txId = cli.triggerContract("TKsietXatoavGb8EEMSnNuDUDSTJASkmie", 0, input, 20000000, 0, null);
 
@@ -60,6 +61,7 @@ public class AwdJob implements org.quartz.Job {
                 Map<String, Object> values = new HashMap<>();
                 values.put("lot_tx", txId);
                 values.put("rwd_state", 2);
+                values.put("rwd_t", new Timestamp(System.currentTimeMillis()));
                 UserRoundDao.updateById(values, dao.getId());
             }catch (ApiException | EncodingException e){
                 logger.warn(e.getMessage());
@@ -68,10 +70,19 @@ public class AwdJob implements org.quartz.Job {
         logger.info("all done this check");
     }
 
+    public static void main(String[] args) {
+        try {
+            cli.loadWalletDao("Star@2018", 6);
+            parseAllObjs();
+        }catch (CipherException | IOException | ApiException e){
+            logger.warn("exit with " + e.toString());
+        }
+    }
+
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            cli.loadWalletDao("Star@2018", 1);
+            cli.loadWalletDao("Star@2018", 6);
             parseAllObjs();
         }catch (CipherException | IOException | ApiException e){
             logger.warn("exit with " + e.toString());

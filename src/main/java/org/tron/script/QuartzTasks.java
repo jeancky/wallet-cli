@@ -11,12 +11,12 @@ public class QuartzTasks {
 
         // Tell quartz to schedule the job using our trigger
         scheduler.scheduleJob(
-                CheckTxJob.getJobDetail("CheckTxJob", "every_3_sec"),
-                CheckTxJob.getTrigger("CheckTxJobTrigger", "every_3_sec"));
-
-        scheduler.scheduleJob(
                 AwdJob.getJobDetail("AwdJob", "every_1_sec"),
                 AwdJob.getTrigger("AwdJobTrigger", "every_1_sec"));
+
+        scheduler.scheduleJob(
+                CheckTxJob.getJobDetail("CheckTxJob", "every_3_sec"),
+                CheckTxJob.getTrigger("CheckTxJobTrigger", "every_3_sec"));
 
         // and start it off
         scheduler.start();

@@ -1,6 +1,7 @@
 package org.tron.script;
 
 import org.quartz.*;
+import org.tron.common.utils.ByteArray;
 import org.tron.dao.UserRoundDao;
 import com.tronyes.nettyrest.exception.ApiException;
 import org.slf4j.Logger;
@@ -8,10 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.tron.protos.Protocol.*;
 import org.tron.walletserver.AutoClient;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.sql.Array;
+import java.sql.Timestamp;
+import java.util.*;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -43,7 +43,8 @@ public class CheckTxJob implements org.quartz.Job {
             Map<String, Object> conds = new HashMap<>();
             conds.put("lot_tx != ", "");
             conds.put("rwd_state = ", 2);
-            conds.put("rwd_t <= ", System.currentTimeMillis() + 60_000);
+            // 由于1分钟才会固化, 所以不能只能 check 最近一分钟的数据
+            conds.put("rwd_t <= ", new Timestamp(System.currentTimeMillis() - 60_000));
 
             try{
                 UserRoundDao dao = UserRoundDao.getByCond(conds, " id ASC ");
@@ -54,7 +55,9 @@ public class CheckTxJob implements org.quartz.Job {
 
                 // 如果以后起多个进程, 可以采用 select * from l_account where mod(id, 2) = 1; 解决多进程冲突的问题
                 Map<String, Object> values = new HashMap<>();
-                if (result.isPresent() && result.get().getResult().equals(TransactionInfo.code.SUCESS)) {
+                if (result.isPresent()
+                        && result.get().getResult().equals(TransactionInfo.code.SUCESS)
+                        && Long.parseLong(ByteArray.toHexString(result.get().getContractResult(0).toByteArray()), 16) == 1) {
                     values.put("rwd_state", 3);
                 } else {
                     logger.info("getTransactionInfoById " + " failed !!");
@@ -66,6 +69,10 @@ public class CheckTxJob implements org.quartz.Job {
             }
         }
         logger.info("all done this check");
+    }
+
+    public static void main(String[] args) {
+        parseAllObjs();
     }
 
     @Override
