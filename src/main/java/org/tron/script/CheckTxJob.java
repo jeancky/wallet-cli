@@ -1,5 +1,6 @@
 package org.tron.script;
 
+import org.quartz.*;
 import org.tron.dao.UserRoundDao;
 import com.tronyes.nettyrest.exception.ApiException;
 import org.slf4j.Logger;
@@ -7,16 +8,33 @@ import org.slf4j.LoggerFactory;
 import org.tron.protos.Protocol.*;
 import org.tron.walletserver.AutoClient;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-// check transaction status
-public class CTScript {
-    private static final Logger logger = LoggerFactory.getLogger(CTScript.class);
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
 
-    public static void main(String[] args) {
-        parseAllObjs();
+@DisallowConcurrentExecution
+public class CheckTxJob implements org.quartz.Job {
+    private static final Logger logger = LoggerFactory.getLogger(CheckTxJob.class);
+    // "every_5_min"
+    public static JobDetail getJobDetail(String jobName, String groupName) {
+        return newJob(CheckTxJob.class)
+                .withIdentity(jobName, groupName)
+                .build();
+    }
+
+    public static Trigger getTrigger(String tiggerName, String groupName) {
+        // http://www.quartz-scheduler.org/documentation/quartz-2.2.x/examples/Example3.html
+        return newTrigger()
+                .withIdentity(tiggerName, groupName)
+                .startNow()
+                // 每3秒钟 check 一次
+                .withSchedule(cronSchedule("0/3 * * * * ?"))
+                .build();
     }
 
     private static void parseAllObjs() {
@@ -30,10 +48,7 @@ public class CTScript {
             try{
                 UserRoundDao dao = UserRoundDao.getByCond(conds, " id ASC ");
                 if (dao == null) {
-                    // FIXME 这种方法并不好, 最好采用 websocket 的方式长连接
-                    Thread.sleep(1000);
-                    logger.info("waiting 1000 ms");
-                    continue;
+                    break;
                 }
                 Optional<TransactionInfo> result = AutoClient.getTransactionInfoById(dao.getLot_tx());
 
@@ -48,11 +63,14 @@ public class CTScript {
                 UserRoundDao.updateById(values, dao.getId());
             }catch (ApiException e){
                 logger.warn(e.getMessage());
-            }catch (InterruptedException e){
-                logger.warn(e.getMessage());
-                break;
             }
         }
+        logger.info("all done this check");
+    }
+
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        parseAllObjs();
     }
 }
 
