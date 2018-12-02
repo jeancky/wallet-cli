@@ -7,16 +7,10 @@ HOSTNAME="120.77.151.174"
 USER="tronjar"
 
 QuartzTasks="../build/libs/QuartzTasks.jar"
-ServerLauncher="../build/libs/ServerLauncher.jar"
 StartService="start_service.sh"
 
 if [ ! -f "${QuartzTasks}" ]; then
 	echo "${QuartzTasks} 不存在 上线终止"
-	exit
-fi
-
-if [ ! -f "${ServerLauncher}" ]; then
-	echo "${ServerLauncher} 不存在 上线终止"
 	exit
 fi
 
@@ -63,7 +57,7 @@ TMP_BAK=$(mktemp)
 cat > $TMP_BAK << EOF
 #exp_internal 1 # Uncomment for debug
 set timeout -1
-spawn scp $QuartzTasks $ServerLauncher $StartService $USER@$HOSTNAME:$DIR_TODO
+spawn scp $QuartzTasks $StartService $USER@$HOSTNAME:$DIR_TODO
 match_max 100000
 expect "*assword:*"
 send -- "$PASS\r"

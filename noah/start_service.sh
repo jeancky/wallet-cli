@@ -6,32 +6,15 @@ DIR_BACKUP="${ROOT_RUNTIME}/backup"
 DIR_TODO="${ROOT_RUNTIME}/todo"
 
 QuartzTasks="QuartzTasks.jar"
-ServerLauncher="ServerLauncher.jar"
-
-launcher="${ROOT_RUNTIME}/${ServerLauncher}"
-launcherTodo="${DIR_TODO}/${ServerLauncher}"
-launcherBackup="${DIR_BACKUP}/${ServerLauncher}_${CTIME}.jar"
 
 task="${ROOT_RUNTIME}/${QuartzTasks}"
 taskTodo="${DIR_TODO}/${QuartzTasks}"
 taskBackup="${DIR_BACKUP}/${QuartzTasks}_${CTIME}.jar"
 
-if [ ! -f "${launcherTodo}" ]; then
-	echo "${launcherTodo} 不存在 上线终止"
-	exit
-fi
-
 if [ ! -f "${taskTodo}" ]; then
 	echo "${taskTodo} 不存在 上线终止"
 	exit
 fi
-
-pid=`(ps -ef | grep ${ServerLauncher} | grep -v "grep") | awk '{print $2}'`
-echo "当前 ServerLauncher 进程: ${pid}"
-for id in $pid
-do
-	kill -15 $id
-done
 
 pid=`(ps -ef | grep ${QuartzTasks} | grep -v "grep") | awk '{print $2}'`
 echo "当前 QuartzTasks 进程: ${pid}"
@@ -41,14 +24,9 @@ do
 done
 
 
-mv $launcher $launcherBackup
 mv $task $taskBackup
-
-cp $launcherTodo $launcher
 cp $taskTodo $task
 
-echo "启动 ${launcher}"
-java -jar $launcher &
 
 echo "启动 ${task}"
 java -jar $task &
