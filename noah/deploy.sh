@@ -3,7 +3,7 @@
 ROOT_RUNTIME="/www/tronyes/tronjar"
 DIR_TODO="${ROOT_RUNTIME}/todo"
 
-HOSTNAME="120.77.151.174"
+HOSTNAME="47.107.153.157"
 USER="tronjar"
 
 QuartzTasks="../build/libs/QuartzTasks.jar"
@@ -19,7 +19,7 @@ if [ ! -f "${StartService}" ]; then
 	exit
 fi
 
-read -s -p "输入 $USER@$HOSTNAME 密码"  PASS
+# read -s -p "输入 $USER@$HOSTNAME 密码"  PASS
 
 # ==========BEGIN==========
 echo "\r清理 $DIR_TODO 文件夹"
@@ -32,8 +32,6 @@ cat > $TMP_BAK << EOF
 set timeout -1
 spawn ssh $USER@$HOSTNAME
 match_max 100000
-expect "*assword:*"
-send -- "$PASS\r"
 expect "Last*"
 send -- "rm -rf $DIR_TODO\r"
 send -- "mkdir $DIR_TODO\r"
@@ -59,8 +57,6 @@ cat > $TMP_BAK << EOF
 set timeout -1
 spawn scp $QuartzTasks $StartService $USER@$HOSTNAME:$DIR_TODO
 match_max 100000
-expect "*assword:*"
-send -- "$PASS\r"
 interact
 EOF
 
@@ -84,8 +80,6 @@ cat > $TMP_BAK << EOF
 set timeout -1
 spawn ssh $USER@$HOSTNAME
 match_max 100000
-expect "*assword:*"
-send -- "$PASS\r"
 expect "Last*"
 send -- "chmod +x $DIR_TODO/$StartService\r"
 send -- "$DIR_TODO/$StartService\r"
