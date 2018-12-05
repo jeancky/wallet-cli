@@ -50,7 +50,7 @@ publishing {
 //task sourceJar(type: Jar, dependsOn: classes) {
 //    classifier 'sources'
 //    from sourceSets.main.allSource
-//}
+//} 
 
 // Maven Publish Begin
 task sourceJar(type: Jar) {

@@ -15,30 +15,11 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 @DisallowConcurrentExecution
-public class AwdJob implements org.quartz.Job {
-    private static final Logger logger = LoggerFactory.getLogger(AwdJob.class);
+public class RobJob {
+    private static final Logger logger = LoggerFactory.getLogger(RobJob.class);
     private static final AutoClient cli = new AutoClient();
-
-    public static JobDetail getJobDetail(String jobName, String groupName) {
-        return newJob(AwdJob.class)
-                .withIdentity(jobName, groupName)
-                .build();
-    }
-
-    public static Trigger getTrigger(String tiggerName, String groupName) {
-        // http://www.quartz-scheduler.org/documentation/quartz-2.2.x/examples/Example3.html
-        return newTrigger()
-                .withIdentity(tiggerName, groupName)
-                .startNow()
-                // 每1秒钟 check 一次
-                .withSchedule(cronSchedule("0/1 * * * * ?"))
-                .build();
-    }
 
     private static void parseAllObjs() {
 
@@ -71,16 +52,6 @@ public class AwdJob implements org.quartz.Job {
     }
 
     public static void main(String[] args) {
-        try {
-            cli.loadWalletDao("Star@2018", 6);
-            parseAllObjs();
-        }catch (CipherException | IOException | ApiException e){
-            logger.warn("exit with " + e.toString());
-        }
-    }
-
-    @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
             cli.loadWalletDao("Star@2018", 6);
             parseAllObjs();
