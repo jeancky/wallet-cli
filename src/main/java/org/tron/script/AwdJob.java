@@ -1,6 +1,8 @@
 package org.tron.script;
 
+import com.tronyes.demo.dao.LAcntDao;
 import com.tronyes.demo.dao.UserRoundDao;
+import com.tronyes.nettyrest.exception.StatusCode;
 import org.quartz.*;
 import com.tronyes.nettyrest.exception.ApiException;
 import org.slf4j.Logger;
@@ -53,6 +55,7 @@ public class AwdJob implements org.quartz.Job {
                 if (dao == null) {
                     break;
                 }
+
                 String params = String.format("\"%s\",\"%s\",%d,%d", dao.getBet_id(), dao.getAddress(), dao.getBet_val(), dao.getLot_val());
                 byte[] input = Hex.decode(AbiUtil.parseMethod("rr(bytes32,address,uint256,uint256)", params, false));
                 String txId = cli.triggerContract("TKsietXatoavGb8EEMSnNuDUDSTJASkmie", 0, input, 20000000, 0, null);
@@ -72,8 +75,11 @@ public class AwdJob implements org.quartz.Job {
 
     public static void main(String[] args) {
         try {
-            cli.loadWalletDao("Star@2018", 6);
-            parseAllObjs();
+            LAcntDao dao = LAcntDao.getById(6);
+            if (dao != null) {
+                cli.loadWalletDao(dao,"Star@2018");
+                parseAllObjs();
+            }
         }catch (CipherException | IOException | ApiException e){
             logger.warn("exit with " + e.toString());
         }
@@ -82,7 +88,12 @@ public class AwdJob implements org.quartz.Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            cli.loadWalletDao("Star@2018", 6);
+            LAcntDao dao = LAcntDao.getById(6);
+            if (dao == null) {
+                throw new ApiException(StatusCode.ADDRESS_EMPTY);
+            }
+
+            cli.loadWalletDao(dao,"Star@2018");
             parseAllObjs();
         }catch (CipherException | IOException | ApiException e){
             logger.warn("exit with " + e.toString());

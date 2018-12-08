@@ -5,6 +5,8 @@ import com.tronyes.nettyrest.exception.StatusCode;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +105,47 @@ public abstract class BaseDao {
         return MySelect.update(sqls);
     }
 
+    public long saveObj(Map<String, Object> qs, boolean autoUpdate) throws ApiException {
+        long insertId = 0;
+        Field[] fields = this.getClass().getDeclaredFields();
+        List<String> columns = Arrays.asList((String[])qs.get(KEY_COLUMNS));
+
+        Map<String, Object> values = new HashMap<>();
+        Long id = null;
+        try {
+            for (Field field: fields) {
+                String varName = field.getName();
+                if(!field.isAccessible()) field.setAccessible(true);
+                Object value = field.get(this);
+                if (value == null){
+                    continue;
+                }
+                if (!columns.contains(varName)){
+                    continue;
+                }
+                if (varName.equalsIgnoreCase("id")){
+                    id = (Long) field.get(this);
+                }else {
+                    values.put(varName, field.get(this));
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        if (values.size() <= 0)
+            return insertId;
+
+        if (autoUpdate && (id != null) && id > 0){
+            Map<String, Object> conds = new HashMap<>();
+            conds.put("id = ", id);
+            int affectCount = update(qs, values, conds);
+            insertId = affectCount > 0 ? id : 0;
+        }else{
+            insertId = insert((String)qs.get(KEY_TABLENAME), values, "id = VALUES(`id`)");
+        }
+
+        return insertId;
+    }
 
     public static Long insert(String tableName, Map<String, Object> values) throws ApiException {
         return insert(tableName, values, "");

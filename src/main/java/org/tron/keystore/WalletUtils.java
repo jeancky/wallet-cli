@@ -2,6 +2,7 @@ package org.tron.keystore;
 
 import com.alibaba.fastjson.JSON;
 import com.tronyes.demo.dao.LAcntDao;
+import com.tronyes.demo.dao.LPlayerDao;
 import com.tronyes.nettyrest.exception.ApiException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -142,6 +143,15 @@ public class WalletUtils {
 
   public static WalletFile loadWalletFile(File source) throws IOException {
    return objectMapper.readValue(source, WalletFile.class);
+  }
+
+  public static WalletFile loadWalletDao(LPlayerDao dao) throws IOException {
+    WalletFile wallet = new WalletFile();
+    wallet.setAddress(dao.getAddress());
+    wallet.setId(dao.getUdid());
+    wallet.setVersion(dao.getVersion());
+    wallet.setCrypto(objectMapper.readValue(dao.getCrypto(), WalletFile.Crypto.class));
+    return wallet;
   }
 
   public static WalletFile loadWalletDao(LAcntDao dao) throws IOException {

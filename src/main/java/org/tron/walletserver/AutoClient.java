@@ -1,6 +1,7 @@
 package org.tron.walletserver;
 
 import com.tronyes.demo.dao.LAcntDao;
+import com.tronyes.demo.dao.LPlayerDao;
 import com.tronyes.nettyrest.exception.ApiException;
 import com.tronyes.nettyrest.exception.StatusCode;
 import com.google.protobuf.ByteString;
@@ -63,12 +64,14 @@ public class AutoClient {
         return rpcVersion;
     }
 
-    public void loadWalletDao(String pswd, Integer id) throws CipherException, IOException, ApiException {
+    public void loadWalletDao(LPlayerDao dao, String pswd) throws CipherException, IOException {
 
-        LAcntDao dao = LAcntDao.getById(id);
-        if (dao == null) {
-            throw new ApiException(StatusCode.ADDRESS_EMPTY);
-        }
+        WalletFile walletFile = WalletUtils.loadWalletDao(dao);
+        this.address = decodeFromBase58Check(walletFile.getAddress());
+        this.ecKey = Wallet.decrypt(pswd.getBytes(), walletFile);
+    }
+
+    public void loadWalletDao(LAcntDao dao, String pswd) throws CipherException, IOException {
 
         WalletFile walletFile = WalletUtils.loadWalletDao(dao);
         this.address = decodeFromBase58Check(walletFile.getAddress());
@@ -188,7 +191,11 @@ public class AutoClient {
         AutoClient cli = new AutoClient();
         try {
 //            cli.loadWalletFile(0, "Star@2018");
-            cli.loadWalletDao("Star@2018", 1);
+            LAcntDao dao = LAcntDao.getById(1);
+            if (dao == null) {
+                throw new ApiException(StatusCode.ADDRESS_EMPTY);
+            }
+            cli.loadWalletDao(dao,"Star@2018");
             byte[] input = Hex.decode(AbiUtil.parseMethod("ca(address,uint16)", "\"TMfnsYJJfkNCUhWEcT25aG6uEbToQfoyXG\",20", false));
             String txId = cli.triggerContract("TC1tzxXDV63YJXsd4ho5kVL6APhRg533Wz", 0, input, 1000000000, 0, null);
 

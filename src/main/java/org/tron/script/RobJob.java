@@ -1,6 +1,9 @@
 package org.tron.script;
 
+import com.tronyes.demo.dao.LAcntDao;
+import com.tronyes.demo.dao.LPlayerDao;
 import com.tronyes.demo.dao.UserRoundDao;
+import com.tronyes.nettyrest.exception.StatusCode;
 import org.quartz.*;
 import com.tronyes.nettyrest.exception.ApiException;
 import org.slf4j.Logger;
@@ -24,18 +27,24 @@ public class RobJob {
     private static void parseAllObjs() {
 
         Map<String, Object> conds = new HashMap<>();
-        conds.put("bet_state = ", 10);
-        conds.put("lot_val > ", 0);
-        conds.put("rwd_state < ", 2);
+        conds.put("alb_amt >= ", 110_000_000); // 可用余额大于100TRX
+        conds.put("lb_t < ", new Timestamp(System.currentTimeMillis() - 360_000));
+        conds.put("state = ", 1);
 
         while (true){
             try{
-                UserRoundDao dao = UserRoundDao.getByCond(conds, " id ASC ");
+                LPlayerDao dao = LPlayerDao.getById(1);
                 if (dao == null) {
-                    break;
+                    throw new ApiException(StatusCode.ADDRESS_EMPTY);
                 }
-                String params = String.format("\"%s\",\"%s\",%d,%d", dao.getBet_id(), dao.getAddress(), dao.getBet_val(), dao.getLot_val());
-                byte[] input = Hex.decode(AbiUtil.parseMethod("rr(bytes32,address,uint256,uint256)", params, false));
+                cli.loadWalletDao(dao, "Star@2018");
+
+                List<Object> params = new LinkedList<Object>(){ {
+                    add("param-str");
+                    add(20);
+                }};
+
+                byte[] input = AbiUtil.parseMethod("ca(address,uint16)", params, false);
                 String txId = cli.triggerContract("TKsietXatoavGb8EEMSnNuDUDSTJASkmie", 0, input, 20000000, 0, null);
 
                 // 如果以后起多个进程, 可以采用 select * from l_account where mod(id, 2) = 1; 解决多进程冲突的问题
@@ -44,7 +53,7 @@ public class RobJob {
                 values.put("rwd_state", 2);
                 values.put("rwd_t", new Timestamp(System.currentTimeMillis()));
                 UserRoundDao.updateById(values, dao.getId());
-            }catch (ApiException | EncodingException e){
+            }catch (ApiException | EncodingException | IOException | CipherException e){
                 logger.warn(e.getMessage());
             }
         }
@@ -52,12 +61,7 @@ public class RobJob {
     }
 
     public static void main(String[] args) {
-        try {
-            cli.loadWalletDao("Star@2018", 6);
-            parseAllObjs();
-        }catch (CipherException | IOException | ApiException e){
-            logger.warn("exit with " + e.toString());
-        }
+        parseAllObjs();
     }
 }
 
