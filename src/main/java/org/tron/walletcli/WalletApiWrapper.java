@@ -342,7 +342,6 @@ public class WalletApiWrapper {
       return Optional.empty();
     }
   }
-
   public Optional<ProposalList> getProposalListPaginated(long offset, long limit) {
     try {
       return WalletApi.getProposalListPaginated(offset, limit);

@@ -14,89 +14,32 @@ public class UserDao extends BaseDao {
     private Long id;
     private String nick;
     private String address;
-    private long lucky_h;
-    private long lucky_m;
-    private long lucky_l;
+    private Long lucky_h;
+    private Long lucky_m;
+    private Long lucky_l;
+    private Integer state;
+    private Integer rtype;
 
-    private long total_bet;
-    private long total_reward;
-    private long round_count;
+    private Long total_bet;
+    private Long total_reward;
+    private Long round_count;
 
     private Timestamp c_t;
     private Timestamp u_t;
 
-    public long getId() {
-        return id;
+
+    public long saveObj(boolean autoUpdate) throws ApiException {
+        return super.saveObj(qs, autoUpdate);
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public boolean recordBet(Long bet_amount) throws ApiException {
+        if (bet_amount == null || bet_amount <= 0){
+            return false;
+        }
+        this.total_bet = total_bet + bet_amount;
+        this.round_count = round_count + 1;
+        return (super.saveObj(qs, true) > 0);
     }
-
-    public String getNick() { return nick; }
-
-    public void setNick(String nick) {
-        this.nick = nick;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public long getLucky_h() { return lucky_h; }
-
-    public void setLucky_h(long lucky_h) {
-        this.lucky_h = lucky_h;
-    }
-
-    public long getLucky_m() {
-        return lucky_m;
-    }
-
-    public void setLucky_m(long lucky_m) {
-        this.lucky_m = lucky_m;
-    }
-
-    public long getLucky_l() {
-        return lucky_l;
-    }
-
-    public void setLucky_l(long lucky_l) {
-        this.lucky_l = lucky_l;
-    }
-
-    public Date getC_t() {
-        return c_t;
-    }
-
-    public void setC_t(Timestamp c_t) {
-        this.c_t = c_t;
-    }
-
-    public Date getU_t() {
-        return u_t;
-    }
-
-    public void setU_t(Timestamp u_t) {
-        this.u_t = u_t;
-    }
-
-    public long getRound_count() { return round_count; }
-
-    public void setRound_count(long round_count) { this.round_count = round_count; }
-
-    public long getTotal_reward() { return total_reward; }
-
-    public void setTotal_reward(long total_reward) { this.total_reward = total_reward; }
-
-    public long getTotal_bet() { return total_bet; }
-
-    public void setTotal_bet(long total_bet) { this.total_bet = total_bet;}
-
 
     public static UserDao getByAddress(String address) throws ApiException {
         Map<String, Object> conds = new HashMap<>();
@@ -108,22 +51,11 @@ public class UserDao extends BaseDao {
         return getOne(qs, iid);
     }
 
-    public static long insert(UserDao user) throws ApiException {
-        Map<String, Object> values = new HashMap<>();
-        values.put("address", user.getAddress());
-        values.put("lucky_h", ""+user.getLucky_h());
-        values.put("lucky_m", ""+user.getLucky_h());
-        values.put("lucky_l", ""+user.getLucky_h());
-        values.put("state", "1");
-
-        return insert((String)qs.get(KEY_TABLENAME), values, "id = VALUES(`id`)");
-    }
-
-    public static int update(Map<String, Object> valus, Map<String, Object> conds) throws ApiException {
+    public static int update(Map<String, Object> valus, Map<String, Object> conds) throws ApiException{
         return update(qs, valus, conds);
     }
 
-    public static int update(Map<String, Object> valus, String conds) throws ApiException {
+    public static int update(Map<String, Object> valus, String conds) throws ApiException{
         return update(qs, valus, conds);
     }
 
@@ -131,6 +63,123 @@ public class UserDao extends BaseDao {
     static {
         qs.put(KEY_TABLENAME, "m_user");
         qs.put(KEY_DBSELECTOR, new MySelect<>(new UserDao()));
-        qs.put(KEY_COLUMNS, new String[]{"id", "nick", "address", "lucky_h", "lucky_l", "lucky_m", "total_bet", "total_reward", "round_count", "c_t", "u_t"});
+        qs.put(KEY_COLUMNS, new String[]{"id", "nick", "address", "lucky_h", "lucky_l", "lucky_m", "state", "rtype", "total_bet", "total_reward", "round_count", "c_t", "u_t"});
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public UserDao setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public UserDao setAddress(String address) {
+        this.address = address;
+        return this;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public UserDao setNick(String nick) {
+        this.nick = nick;
+        return this;
+    }
+
+    public long getLucky_h() {
+        return lucky_h;
+    }
+
+    public UserDao setLucky_h(long lucky_h) {
+        this.lucky_h = lucky_h;
+        return this;
+    }
+
+    public long getLucky_m() {
+        return lucky_m;
+    }
+
+    public UserDao setLucky_m(long lucky_m) {
+        this.lucky_m = lucky_m;
+        return this;
+    }
+
+    public long getLucky_l() {
+        return lucky_l;
+    }
+
+    public UserDao setLucky_l(long lucky_l) {
+        this.lucky_l = lucky_l;
+        return this;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public UserDao setState(int state) {
+        this.state = state;
+        return this;
+    }
+
+    public long getTotal_bet() {
+        return total_bet;
+    }
+
+    public UserDao setTotal_bet(long total_bet) {
+        this.total_bet = total_bet;
+        return this;
+    }
+
+    public long getTotal_reward() {
+        return total_reward;
+    }
+
+    public UserDao setTotal_reward(long total_reward) {
+        this.total_reward = total_reward;
+        return this;
+    }
+
+    public long getRound_count() {
+        return round_count;
+    }
+
+    public UserDao setRound_count(long round_count) {
+        this.round_count = round_count;
+        return this;
+    }
+
+    public Timestamp getC_t() {
+        return c_t;
+    }
+
+    public UserDao setC_t(Timestamp c_t) {
+        this.c_t = c_t;
+        return this;
+    }
+
+    public Timestamp getU_t() {
+        return u_t;
+    }
+
+    public UserDao setU_t(Timestamp u_t) {
+        this.u_t = u_t;
+        return this;
+    }
+
+    public Integer getRtype() {
+        return rtype;
+    }
+
+    public UserDao setRtype(Integer rtype) {
+        this.rtype = rtype;
+        return this;
     }
 }

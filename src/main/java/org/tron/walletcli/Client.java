@@ -1760,7 +1760,7 @@ public class Client {
     System.out.println("ExchangeTransaction");
     System.out.println("ExchangeWithdraw");
     System.out.println("FreezeBalance");
-    System.out.println("GenerateAAddress");
+    System.out.println("GenerateAddress");
     System.out.println("GetAccount");
     System.out.println("GetAccountNet");
     System.out.println("GetAccountResource");

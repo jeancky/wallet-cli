@@ -1,5 +1,6 @@
 package org.tron.walletserver;
 
+import com.alibaba.fastjson.JSON;
 import com.tronyes.demo.dao.LAcntDao;
 import com.tronyes.demo.dao.LPlayerDao;
 import com.tronyes.nettyrest.exception.ApiException;
@@ -15,6 +16,7 @@ import org.tron.common.crypto.Sha256Hash;
 import org.tron.common.utils.*;
 import org.tron.core.config.Configuration;
 import org.tron.core.config.Parameter.CommonConstant;
+import org.tron.core.exception.CancelException;
 import org.tron.core.exception.CipherException;
 import org.tron.core.exception.EncodingException;
 import org.tron.keystore.*;
@@ -183,6 +185,46 @@ public class AutoClient {
         return processTransactionExtention(transactionExtention);
     }
 
+    public String sendCoin(String toAddr, long amount) throws ApiException {
+
+        byte[] to = decodeFromBase58Check(toAddr);
+        if (to == null){
+            throw  new ApiException(StatusCode.ADDRESS_EMPTY);
+        }
+
+        Contract.TransferContract.Builder builder = Contract.TransferContract.newBuilder();
+        ByteString bsTo = ByteString.copyFrom(to);
+        ByteString bsOwner = ByteString.copyFrom(address);
+        builder.setToAddress(bsTo);
+        builder.setOwnerAddress(bsOwner);
+        builder.setAmount(amount);
+        Contract.TransferContract contract = builder.build();
+
+        TransactionExtention transactionExtention = rpcCli.createTransaction2(contract);
+        return processTransactionExtention(transactionExtention);
+    }
+
+    public WalletFile generateAddress(String password) throws CipherException {
+        EmptyMessage.Builder builder = EmptyMessage.newBuilder();
+        AddressPrKeyPairMessage result = rpcCli.generateAddress(builder.build());
+
+        byte[] priKey = StringUtils.hexs2Bytes(result.getPrivateKey().getBytes());
+        if (!WalletApi.priKeyValid(priKey)) {
+            return null;
+        }
+        ECKey ecKey = ECKey.fromPrivate(priKey);
+//        ECKey ecKey = ECKey.fromPrivate(StringUtils.hexs2Bytes(result.getPrivateKey().getBytes()));
+        return Wallet.createStandard(password.getBytes(), ecKey);
+    }
+
+    public Account queryAccount() {
+        return rpcCli.queryAccount(this.address);//call rpc
+    }
+
+    public static Account queryAccount(byte[] address) {
+        return rpcCli.queryAccount(address);//call rpc
+    }
+
     public static Optional<TransactionInfo> getTransactionInfoById(String txID) {
         return rpcCli.getTransactionInfoById(txID);
     }
@@ -191,13 +233,17 @@ public class AutoClient {
         AutoClient cli = new AutoClient();
         try {
 //            cli.loadWalletFile(0, "Star@2018");
-            LAcntDao dao = LAcntDao.getById(1);
-            if (dao == null) {
-                throw new ApiException(StatusCode.ADDRESS_EMPTY);
-            }
-            cli.loadWalletDao(dao,"Star@2018");
-            byte[] input = Hex.decode(AbiUtil.parseMethod("ca(address,uint16)", "\"TMfnsYJJfkNCUhWEcT25aG6uEbToQfoyXG\",20", false));
-            String txId = cli.triggerContract("TC1tzxXDV63YJXsd4ho5kVL6APhRg533Wz", 0, input, 1000000000, 0, null);
+//            LAcntDao dao = LAcntDao.getById(6);
+//            if (dao == null) {
+//                throw new ApiException(StatusCode.ADDRESS_EMPTY);
+//            }
+//            cli.loadWalletDao(dao,"Star@2018");
+
+            LPlayerDao dao = LPlayerDao.getById(1);
+            cli.loadWalletDao(dao,"Star@2018@goole&112358");
+
+            byte[] input = Hex.decode(AbiUtil.parseMethod("doBet(bytes32,uint256)", "\"19c6aa9f0ae2e92c94edb51207351ff57f6def64975c643fdc3cd7f69970624d\",100", false));
+            String txId = cli.triggerContract("TQy3pheSHVUHuxGLdkhp2H7yhJbsqUiiBn", 10, input, 30000000, 0, null);
 
             Optional<TransactionInfo> result = cli.getTransactionInfoById(txId);
             if (result.isPresent()) {

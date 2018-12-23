@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.tron.protos.Protocol.*;
 import org.tron.walletserver.AutoClient;
 
+import java.net.ConnectException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -55,15 +56,16 @@ public class CheckTxJob implements org.quartz.Job {
                 // 如果以后起多个进程, 可以采用 select * from l_account where mod(id, 2) = 1; 解决多进程冲突的问题
                 Map<String, Object> values = new HashMap<>();
                 if (result.isPresent()
-                        && result.get().getResult().equals(TransactionInfo.code.SUCESS)
-                        && Long.parseLong(ByteArray.toHexString(result.get().getContractResult(0).toByteArray()), 16) == 1) {
+                    && result.get().getResult().equals(TransactionInfo.code.SUCESS)
+                    && result.get().getContractResultCount() > 0
+                    && Long.parseLong(ByteArray.toHexString(result.get().getContractResult(0).toByteArray()), 16) == 1) {
                     values.put("rwd_state", 3);
                 } else {
-                    logger.info("getTransactionInfoById " + " failed !!");
+                    logger.info("getTransactionInfoById " + dao.getLot_tx() + " failed !!");
                     values.put("rwd_state", 4);
                 }
                 UserRoundDao.updateById(values, dao.getId());
-            }catch (ApiException e){
+            }catch (Exception e){
                 logger.warn(e.getMessage());
             }
         }

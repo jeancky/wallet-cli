@@ -46,11 +46,25 @@ public class JdbcPool {
     }
 
     public static Connection getWriteConnection() throws SQLException {
-        return writeDataSource.getConnection();
+        try{
+            return writeDataSource.getConnection();
+        }catch (SQLException e){
+            throw e;
+        }catch (Exception e){
+            logger.error("getWriteConnection", e);
+            throw new SQLException(e.getMessage());
+        }
     }
 
     public static Connection getReadConnection() throws SQLException {
-        return readDataSource == null ? getWriteConnection(): readDataSource.getConnection();
+        try{
+            return readDataSource == null ? getWriteConnection(): readDataSource.getConnection();
+        }catch (SQLException e){
+            throw e;
+        }catch (Exception e){
+            logger.error("getReadConnection", e);
+            throw new SQLException(e.getMessage());
+        }
     }
 
     public static void release(Connection conn, Statement st, ResultSet rs) {

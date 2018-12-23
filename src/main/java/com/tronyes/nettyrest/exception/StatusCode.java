@@ -30,6 +30,9 @@ public class StatusCode {
     public static final int GAME_MORE_5 = 2005;
     public static final int DB_PSWD_EMPTY = 2006;
 
+    public static final int SCPT_SHORT_COIN = 11000;
+    public static final int SCPT_PAY_ERR = 11001;
+
     static {
         codeMap.put(CREATED_SUCCESS, "created success");
         codeMap.put(DB_SQL_ERR, "sql error");
@@ -47,6 +50,9 @@ public class StatusCode {
         codeMap.put(ADDRESS_EMPTY, "address is empty!");
         codeMap.put(GAME_MORE_5, "no more than 5 bet per round.");
         codeMap.put(DB_PSWD_EMPTY, "DB password mapping not found.");
+
+        codeMap.put(SCPT_SHORT_COIN, "short of trx: %s.");
+        codeMap.put(SCPT_PAY_ERR, "pay tx empty.");
     }
 
     public static ApiException buildException(int code, String parameter){

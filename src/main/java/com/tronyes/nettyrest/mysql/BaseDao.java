@@ -124,7 +124,11 @@ public abstract class BaseDao {
                     continue;
                 }
                 if (varName.equalsIgnoreCase("id")){
-                    id = (Long) field.get(this);
+                    Object iid = field.get(this);
+                    if (iid instanceof Integer){
+                        iid = ((Integer) iid).longValue();
+                    }
+                    id = (Long) iid;
                 }else {
                     values.put(varName, field.get(this));
                 }

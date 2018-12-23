@@ -5,6 +5,7 @@ import com.tronyes.nettyrest.exception.StatusCode;
 import com.tronyes.nettyrest.mysql.BaseDao;
 import com.tronyes.nettyrest.mysql.MySelect;
 
+import java.net.ConnectException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,8 @@ public class UserRoundDao extends BaseDao {
     private Long id;
     private Long gr_id;
     private Long u_id;
+    private Integer type;
+    private Integer rtype;
     private String address;    // 用户的 address
     private Integer bet_state;  // 1:进行中，2:已结束
     private String bet_id;
@@ -31,11 +34,13 @@ public class UserRoundDao extends BaseDao {
     private Timestamp c_t;
     private Timestamp u_t;
 
-    public static Long insert(Map<String, Object> values, String onDup) throws ApiException {
-        return insert((String)qs.get(KEY_TABLENAME), values, onDup);
+    public long saveObj(boolean autoUpdate) throws ApiException {
+        return super.saveObj(qs, autoUpdate);
     }
 
     public static List<UserRoundDao> getUserGameRoundList(Long uid, Long gr_id) throws ApiException {
+        if (uid == null || gr_id == null || uid <= 0 || gr_id <= 0)
+            return null;
         Map<String, Object> conds = new HashMap<>();
         conds.put("u_id = ", uid);
         conds.put("gr_id = ", gr_id);
@@ -51,6 +56,10 @@ public class UserRoundDao extends BaseDao {
         return update(qs, values, conds);
     }
 
+    public static UserRoundDao getByCond(Map<String, Object> conds, String orderBy) throws ApiException {
+        return getOne(qs, conds, orderBy);
+    }
+
     public static List<UserRoundDao> getListByCond(Map<String, Object>conds, String orderBy, Integer limit) throws ApiException {
         return getList(qs, conds, orderBy, limit);
     }
@@ -59,32 +68,11 @@ public class UserRoundDao extends BaseDao {
         return getOne(qs, iid);
     }
 
-    public static UserRoundDao getByCond(Map<String, Object> conds, String orderBy) throws ApiException {
-        return getOne(qs, conds, orderBy);
-    }
-
-    public static Map<String, Object> packageUserRound(UserRoundDao dao) {
-        Map<String, Object> obj = new HashMap<>();
-        obj.put("gr_id", dao.getGr_id());
-        obj.put("uid", dao.getU_id());
-        obj.put("addr", dao.getAddress());
-        obj.put("bet_val", dao.getBet_val());
-        obj.put("bet_id", dao.getBet_id());
-        obj.put("bet", dao.getBet_num());
-        obj.put("state", dao.getBet_state());
-        obj.put("lottery", dao.getLot_type());
-        obj.put("lot_val", dao.getLot_val());
-        obj.put("result", dao.getLot_num());
-        obj.put("rwd_state", dao.getRwd_state());
-        obj.put("ts", dao.getC_t());
-        return obj;
-    }
-
     protected static Map<String, Object> qs = new HashMap<>();
     static {
         qs.put(KEY_TABLENAME, "m_user_round");
         qs.put(KEY_DBSELECTOR, new MySelect<>(new UserRoundDao()));
-        qs.put(KEY_COLUMNS, new String[]{"id", "gr_id", "u_id", "address", "bet_state", "bet_id", "bet_val", "bet_tx", "lot_type", "lot_tx", "lot_val", "bet_num", "lot_num", "rwd_state", "rwd_t", "rwd_err", "c_t", "u_t"});
+        qs.put(KEY_COLUMNS, new String[]{"id", "gr_id", "u_id", "type", "rtype", "address", "bet_state", "bet_id", "bet_val", "bet_tx", "lot_type", "lot_tx", "lot_val", "bet_num", "lot_num", "rwd_state", "rwd_t", "rwd_err", "c_t", "u_t"});
     }
 
     //////////////////////////////
@@ -240,6 +228,16 @@ public class UserRoundDao extends BaseDao {
         this.rwd_t = rwd_t;
         return this;
     }
+	
+	    public Integer getType() {
+        return type;
+    }
+
+    public UserRoundDao setType(Integer type) {
+        this.type = type;
+        return this;
+    }
+	
 
     public Timestamp getU_t() {
         return u_t;
@@ -247,6 +245,15 @@ public class UserRoundDao extends BaseDao {
 
     public UserRoundDao setU_t(Timestamp u_t) {
         this.u_t = u_t;
+        return this;
+    }
+
+    public Integer getRtype() {
+        return rtype;
+    }
+
+    public UserRoundDao setRtype(Integer rtype) {
+        this.rtype = rtype;
         return this;
     }
 }

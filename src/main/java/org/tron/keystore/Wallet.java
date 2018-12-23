@@ -5,6 +5,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.UUID;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -16,6 +17,7 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.bouncycastle.crypto.generators.SCrypt;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.spongycastle.util.encoders.Hex;
 import org.tron.common.crypto.ECKey;
 import org.tron.common.crypto.Hash;
 import org.tron.common.utils.ByteArray;
@@ -262,6 +264,14 @@ public class Wallet {
   public static ECKey decrypt(byte[] password, WalletFile walletFile)
       throws CipherException {
     byte[] privateKey = decrypt2PrivateBytes(password, walletFile);
+//    Base64.Encoder encoder = Base64.getEncoder();
+//    byte[] priKey64 = encoder.encode(privateKey);
+//    System.out.println(Hex.toHexString(privateKey));
+//
+//    for (int i = 0; i < privateKey.length; i++) {
+//      StringUtils.printOneByte(privateKey[i]);
+//    }
+
     ECKey ecKey = ECKey.fromPrivate(privateKey);
     StringUtils.clear(privateKey);
     return ecKey;

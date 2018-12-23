@@ -26,74 +26,19 @@ public class GameRoundDao extends BaseDao {
     private Timestamp c_t;
     private Timestamp u_t;
 
-    public Long getId() {
-        return id;
+
+    public boolean recordBet(Long bet_amount) throws ApiException {
+        if (bet_amount == null || bet_amount <= 0){
+            return false;
+        }
+        this.sum_bet = sum_bet + bet_amount;
+        this.game_cnt = game_cnt + 1;
+        return (super.saveObj(qs, true) > 0);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public long saveObj(boolean autoUpdate) throws ApiException {
+        return super.saveObj(qs, autoUpdate);
     }
-
-    public Long getR_id() {
-        return r_id;
-    }
-
-    public void setR_id(Long r_id) {
-        this.r_id = r_id;
-    }
-
-    public Integer getState() {
-        return state;
-    }
-
-    public void setState(Integer state) {
-        this.state = state;
-    }
-
-    public String getChosen() {
-        return chosen;
-    }
-
-    public void setChosen(String chosen) {
-        this.chosen = chosen;
-    }
-
-    public Timestamp getLot_t() {
-        return lot_t;
-    }
-
-    public void setLot_t(Timestamp lot_t) {
-        this.lot_t = lot_t;
-    }
-
-
-    public Integer getType() { return type; }
-
-    public void setType(Integer type) { this.type = type; }
-
-    public Long getSum_bet() { return sum_bet; }
-
-    public void setSum_bet(Long sum_bet) { this.sum_bet = sum_bet; }
-
-    public Long getSum_reward() { return sum_reward; }
-
-    public void setSum_reward(Long sum_reward) { this.sum_reward = sum_reward; }
-
-    public Long getUser_cnt() { return user_cnt; }
-
-    public void setUser_cnt(Long user_cnt) { this.user_cnt = user_cnt; }
-
-    public Long getGame_cnt() { return game_cnt; }
-
-    public void setGame_cnt(Long game_cnt) { this.game_cnt = game_cnt; }
-
-    public Timestamp getC_t() { return c_t; }
-
-    public void setC_t(Timestamp c_t) { this.c_t = c_t; }
-
-    public Timestamp getU_t() { return u_t; }
-
-    public void setU_t(Timestamp u_t) { this.u_t = u_t; }
 
     // 获取指定期
     public static GameRoundDao get(Long roundId) throws ApiException {
@@ -102,19 +47,23 @@ public class GameRoundDao extends BaseDao {
         return getOne(qs, conds);
     }
 
-    public static List<GameRoundDao> getListByConds(Map<String, Object>conds, String orderBy, Integer limit, Integer start) throws ApiException {
-        return getList(qs, conds, orderBy, limit, start);
+    // 获取未开奖列表
+    public static GameRoundDao getOpenGame() throws ApiException {
+        Map<String, Object> conds = new HashMap<>();
+        conds.put("state =", 1);
+        List<GameRoundDao> list = getList(qs, conds, "id DESC",1);
+        return (list == null || list.size() == 0)? null : list.get(0);
     }
 
-    public static GameRoundDao getByConds(Map<String, Object>conds, String orderBy) throws ApiException {
-        return getOne(qs, conds, orderBy);
+    public static GameRoundDao getLastGame() throws ApiException {
+        return getOne(qs,null, "id DESC");
     }
 
-    public static int update(Map<String, Object> valus, Map<String, Object> conds) throws ApiException {
+    public static int update(Map<String, Object> valus, Map<String, Object> conds) throws ApiException{
         return update(qs, valus, conds);
     }
 
-    public static int update(Map<String, Object> valus, String conds) throws ApiException {
+    public static int update(Map<String, Object> valus, String conds) throws ApiException{
         return update(qs, valus, conds);
     }
 
@@ -125,4 +74,111 @@ public class GameRoundDao extends BaseDao {
         qs.put(KEY_COLUMNS, new String[]{"id", "r_id", "state", "type", "sum_bet", "sum_reward", "user_cnt", "game_cnt", "chosen", "lot_t", "c_t", "u_t"});
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public GameRoundDao setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Long getR_id() {
+        return r_id;
+    }
+
+    public GameRoundDao setR_id(Long r_id) {
+        this.r_id = r_id;
+        return this;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public GameRoundDao setState(Integer state) {
+        this.state = state;
+        return this;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public GameRoundDao setType(Integer type) {
+        this.type = type;
+        return this;
+    }
+
+    public Long getSum_bet() {
+        return sum_bet;
+    }
+
+    public GameRoundDao setSum_bet(Long sum_bet) {
+        this.sum_bet = sum_bet;
+        return this;
+    }
+
+    public Long getSum_reward() {
+        return sum_reward;
+    }
+
+    public GameRoundDao setSum_reward(Long sum_reward) {
+        this.sum_reward = sum_reward;
+        return this;
+    }
+
+    public Long getUser_cnt() {
+        return user_cnt;
+    }
+
+    public GameRoundDao setUser_cnt(Long user_cnt) {
+        this.user_cnt = user_cnt;
+        return this;
+    }
+
+    public Long getGame_cnt() {
+        return game_cnt;
+    }
+
+    public GameRoundDao setGame_cnt(Long game_cnt) {
+        this.game_cnt = game_cnt;
+        return this;
+    }
+
+    public String getChosen() {
+        return chosen;
+    }
+
+    public GameRoundDao setChosen(String chosen) {
+        this.chosen = chosen;
+        return this;
+    }
+
+    public Timestamp getLot_t() {
+        return lot_t;
+    }
+
+    public GameRoundDao setLot_t(Timestamp lot_t) {
+        this.lot_t = lot_t;
+        return this;
+    }
+
+    public Timestamp getC_t() {
+        return c_t;
+    }
+
+    public GameRoundDao setC_t(Timestamp c_t) {
+        this.c_t = c_t;
+        return this;
+    }
+
+    public Timestamp getU_t() {
+        return u_t;
+    }
+
+    public GameRoundDao setU_t(Timestamp u_t) {
+        this.u_t = u_t;
+        return this;
+    }
 }
