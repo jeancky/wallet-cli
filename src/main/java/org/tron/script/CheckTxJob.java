@@ -62,7 +62,12 @@ public class CheckTxJob implements org.quartz.Job {
                     values.put("rwd_state", 3);
                 } else {
                     logger.info("getTransactionInfoById " + dao.getLot_tx() + " failed !!");
-                    values.put("rwd_state", 4);
+                    if (dao.getRwd_retry() > 0){
+                        values.put("rwd_state", 1);
+                        values.put("rwd_retry", dao.getRwd_retry() - 1);
+                    }else {
+                        values.put("rwd_state", 4);
+                    }
                 }
                 UserRoundDao.updateById(values, dao.getId());
             }catch (Exception e){

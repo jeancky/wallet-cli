@@ -31,6 +31,7 @@ public class UserRoundDao extends BaseDao {
     private Integer rwd_state;
     private Timestamp rwd_t;
     private String rwd_err;
+    private Integer rwd_retry;
     private Timestamp c_t;
     private Timestamp u_t;
 
@@ -72,7 +73,7 @@ public class UserRoundDao extends BaseDao {
     static {
         qs.put(KEY_TABLENAME, "m_user_round");
         qs.put(KEY_DBSELECTOR, new MySelect<>(new UserRoundDao()));
-        qs.put(KEY_COLUMNS, new String[]{"id", "gr_id", "u_id", "type", "rtype", "address", "bet_state", "bet_id", "bet_val", "bet_tx", "lot_type", "lot_tx", "lot_val", "bet_num", "lot_num", "rwd_state", "rwd_t", "rwd_err", "c_t", "u_t"});
+        qs.put(KEY_COLUMNS, new String[]{"id", "gr_id", "u_id", "type", "rtype", "address", "bet_state", "bet_id", "bet_val", "bet_tx", "lot_type", "lot_tx", "lot_val", "bet_num", "lot_num", "rwd_state", "rwd_t", "rwd_err", "rwd_retry", "c_t", "u_t"});
     }
 
     //////////////////////////////
@@ -254,6 +255,15 @@ public class UserRoundDao extends BaseDao {
 
     public UserRoundDao setRtype(Integer rtype) {
         this.rtype = rtype;
+        return this;
+    }
+
+    public Integer getRwd_retry() {
+        return rwd_retry;
+    }
+
+    public UserRoundDao setRwd_retry(Integer rwd_retry) {
+        this.rwd_retry = rwd_retry;
         return this;
     }
 }
