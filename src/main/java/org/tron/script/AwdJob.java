@@ -61,7 +61,7 @@ public class AwdJob implements org.quartz.Job {
 
                 String params = String.format("\"%s\",\"%s\",%d,%d", dao.getBet_id(), dao.getAddress(), dao.getBet_val(), dao.getLot_val());
                 byte[] input = Hex.decode(AbiUtil.parseMethod("rr(bytes32,address,uint256,uint256)", params, false));
-                String txId = cli.triggerContract("TKsietXatoavGb8EEMSnNuDUDSTJASkmie", 0, input, 20000000, 0, null);
+                String txId = (String) cli.triggerContract("TKsietXatoavGb8EEMSnNuDUDSTJASkmie", 0, input, 20000000, 0, null);
 
                 Map<String, Object> values = new HashMap<>();
                 if (StringUtil.isNullOrEmpty(txId) || txId.equalsIgnoreCase("null")){
