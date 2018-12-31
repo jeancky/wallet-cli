@@ -67,7 +67,7 @@ public class AwdJob implements org.quartz.Job {
                     input = Hex.decode(AbiUtil.parseMethod("rr(bytes32,address,uint256,uint256)", params, false));
                 } else if (dao.getType() == 3) {
                     contractAddress = SIX_CONTRACT_ADDRESS;
-                    params = String.format("\"%s\",\"%s\",%d,%d", dao.getAddress(),dao.getBet_id(), Integer.parseInt(dao.getBet_num()), dao.getBet_val());
+                    params = String.format("\"%s\",\"%s\",%d,%d", dao.getAddress(),dao.getBet_id(), Integer.parseInt(dao.getBet_num(), 2), dao.getBet_val());
                     input = Hex.decode(AbiUtil.parseMethod("doReveal(address,bytes32,uint8,uint256)", params, false));
                 } else {
                     continue;
