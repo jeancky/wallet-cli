@@ -29,7 +29,7 @@ import java.util.Optional;
 public class OpenBlockTask implements org.quartz.Job {
     private static final Logger logger = LoggerFactory.getLogger(AwdJob.class);
     private static final AutoClient cli = new AutoClient();
-    private static final String CONTRACT_ADDRESS = "TYYk2vLCg3niy29Xoh8Nsc3HzhKDnbKbNS";
+    static final String SIX_CONTRACT_ADDRESS = "TTyFQSQfJh4ZUM9hJLhh8QppjtYMQ3BSAi";
 
     private static String shortHex(byte[] string) {
         String hexValue = Hex.toHexString(string).toUpperCase();
@@ -42,7 +42,7 @@ public class OpenBlockTask implements org.quartz.Job {
             if (block != null) {
                 String params = String.format("%d", block.getB_h());
                 byte[] input = Hex.decode(AbiUtil.parseMethod("getBlockHash(uint256)", params, false));
-                GrpcAPI.TransactionExtention transactionExtention = (GrpcAPI.TransactionExtention) cli.triggerContract(CONTRACT_ADDRESS, 0, input, 20000000, 0, null);
+                GrpcAPI.TransactionExtention transactionExtention = (GrpcAPI.TransactionExtention) cli.triggerContract(SIX_CONTRACT_ADDRESS, 0, input, 20000000, 0, null);
                 Protocol.Transaction transaction = transactionExtention.getTransaction();
                 byte[] result = transactionExtention.getConstantResult(0).toByteArray();
 

@@ -22,6 +22,7 @@ import java.util.*;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
+import static org.tron.script.OpenBlockTask.SIX_CONTRACT_ADDRESS;
 
 @DisallowConcurrentExecution
 public class AwdJob implements org.quartz.Job {
@@ -59,10 +60,22 @@ public class AwdJob implements org.quartz.Job {
                     break;
                 }
 
-                String params = String.format("\"%s\",\"%s\",%d,%d", dao.getBet_id(), dao.getAddress(), dao.getBet_val(), dao.getLot_val());
-                byte[] input = Hex.decode(AbiUtil.parseMethod("rr(bytes32,address,uint256,uint256)", params, false));
-                String txId = (String) cli.triggerContract("TKsietXatoavGb8EEMSnNuDUDSTJASkmie", 0, input, 20000000, 0, null);
+                String params;
+                byte[] input;
+                String contractAddress;
+                if (dao.getType() == 1 || dao.getType() == 2) {
+                     contractAddress = "TKsietXatoavGb8EEMSnNuDUDSTJASkmie";
+                    params = String.format("\"%s\",\"%s\",%d,%d", dao.getBet_id(), dao.getAddress(), dao.getBet_val(), dao.getLot_val());
+                    input = Hex.decode(AbiUtil.parseMethod("rr(bytes32,address,uint256,uint256)", params, false));
+                } else if (dao.getType() == 3) {
+                    contractAddress = SIX_CONTRACT_ADDRESS;
+                    params = String.format("\"%s\",\"%s\",%d,%d", dao.getAddress(),dao.getBet_id(), Integer.parseInt(dao.getBet_num()), dao.getBet_val());
+                    input = Hex.decode(AbiUtil.parseMethod("doReveal(address,bytes32,uint8,uint256)", params, false));
+                } else {
+                    continue;
+                }
 
+                String txId = (String) cli.triggerContract(contractAddress, 0, input, 20000000, 0, null);
                 Map<String, Object> values = new HashMap<>();
                 if (StringUtil.isNullOrEmpty(txId) || txId.equalsIgnoreCase("null")){
                     if (--retry > 0){
