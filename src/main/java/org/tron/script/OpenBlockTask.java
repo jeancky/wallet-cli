@@ -3,6 +3,7 @@ package org.tron.script;
 import com.tronyes.demo.dao.BlockDataDao;
 import com.tronyes.demo.dao.LAcntDao;
 import com.tronyes.demo.dao.UserRoundDao;
+import com.tronyes.demo.utils.LuckyUtil;
 import com.tronyes.nettyrest.exception.ApiException;
 import com.tronyes.nettyrest.exception.StatusCode;
 import org.quartz.DisallowConcurrentExecution;
@@ -19,6 +20,9 @@ import org.tron.protos.Protocol;
 import org.tron.walletserver.AutoClient;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @DisallowConcurrentExecution
@@ -48,9 +52,28 @@ public class OpenBlockTask implements org.quartz.Job {
                     } else {
                         String strResult = Hex.toHexString(result);
                         block.setBlock_hash(strResult);
-                    }
 
-                    block.saveObj(true);
+                        int lotNumber = LuckyUtil.getDiceNumberByBlock(strResult);
+
+                        block.setSix_number(lotNumber);
+                        block.saveObj(true);
+
+                        Map<String, Object> conds = new HashMap<>();
+                        conds.put("type = ", 3);
+                        conds.put("gr_id = ", block.getB_h());
+                        List<UserRoundDao> list = UserRoundDao.getListByCond(conds, " id DESC ", null);
+
+                        for (UserRoundDao userRound : list) {
+                            userRound.setLot_num(lotNumber + "");
+                            LuckyUtil.LotteryResult lotRet = LuckyUtil.lotteryDice(userRound.getBet_num(), lotNumber + "");
+                            userRound.setLot_type(lotRet.getResult());
+                            if (lotRet.getResult() > 0 && lotRet.getResult() < 6) {
+                                userRound.setRwd_state(1);
+                                userRound.setLot_val((long)(userRound.getBet_val() * LuckyUtil.lotteryDiceOdds(lotRet.getResult())));
+                            }
+                            userRound.saveObj(true);
+                        }
+                    }
                 }
             }
         } catch (ApiException | EncodingException e) {

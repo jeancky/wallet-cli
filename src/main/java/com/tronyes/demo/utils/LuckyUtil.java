@@ -3,7 +3,11 @@ package com.tronyes.demo.utils;
 import com.tronyes.demo.dao.UserRoundDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.util.encoders.Hex;
+import org.tron.common.crypto.Hash;
+import org.tron.common.utils.ByteArray;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public class LuckyUtil {
@@ -32,7 +36,6 @@ public class LuckyUtil {
             this.result = result;
         }
     }
-
 
     private static final Logger logger = LoggerFactory.getLogger(LuckyUtil.class);
 
@@ -287,5 +290,60 @@ public class LuckyUtil {
         }
 
         return 0;
+    }
+
+    // 掷骰子结果
+    public static int getDiceNumberByBlock(String blockHash) {
+        byte[] blockHashB = ByteArray.fromHexString(blockHash);
+        byte[] saltB = ByteArray.fromHexString("119f4c5d7b7d8fd8be017c51868570c1cf1566dd6e2af4efee1ababe0eea9eaa");
+
+        byte[] combine = new byte[blockHashB.length + saltB.length];
+        System.arraycopy(saltB, 0, combine, 0, saltB.length);
+        System.arraycopy(blockHashB, 0, combine, saltB.length, blockHashB.length);
+        String hash = Hex.toHexString(Hash.sha3(combine));
+
+        BigInteger bi = new BigInteger(hash, 16);
+        int result = bi.mod( new BigInteger("6")).intValue();
+        return result + 1;
+    }
+
+    public static double lotteryDiceOdds(int lotteryType) {
+        if (lotteryType <= 0 || lotteryType > 6) {
+            return 0;
+        }
+
+        return 6f / lotteryType * 0.98;
+
+    }
+
+    public static LotteryResult lotteryDice (String numberStr, String luckyStr) {
+        LotteryResult result = new LotteryResult();
+
+        int number = Integer.parseInt(numberStr);
+        int lucky = Integer.parseInt(luckyStr);
+
+        if (number <= 0 || number >= 0b111111 || lucky<= 0 || lucky > 6) {
+            result.setLottery("");
+            result.setResult(0);
+            return result;
+        }
+
+        boolean win = ((((1 << (lucky - 1)) & number)) > 0);
+
+        if (win) {
+            int temp = number;
+            int sum = 0;
+            for (; temp > 0; ++sum) {
+                temp &= (temp -1) ; // 清除最低位的1
+            }
+
+            result.setLottery(luckyStr);
+            result.setResult(sum);
+        } else {
+            result.setLottery("");
+            result.setResult(0);
+        }
+
+        return result;
     }
 }
