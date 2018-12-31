@@ -18,6 +18,7 @@ import org.tron.protos.Protocol;
 import org.tron.walletserver.AutoClient;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,12 +69,15 @@ public class OpenBlockJob implements org.quartz.Job {
                     if ("0".equals(shortHex(result))) {
                         block.setState(-1);
                     } else {
-                        String strResult = Hex.toHexString(result);
-                        block.setBlock_hash(strResult);
+                        String blockHash = shortHex(result);
+                        block.setBlock_hash(blockHash);
 
-                        int lotNumber = LuckyUtil.getDiceNumberByBlock(strResult);
+                        String lotHash = LuckyUtil.getDiceHashByBlock(blockHash);
+                        BigInteger bi = new BigInteger(lotHash, 16);
+                        int lotNumber = bi.mod(new BigInteger("6")).intValue() + 1;
 
                         block.setSix_number(lotNumber);
+                        block.setLot_hash(lotHash);
                         block.saveObj(true);
 
                         Map<String, Object> conds = new HashMap<>();
@@ -83,12 +87,15 @@ public class OpenBlockJob implements org.quartz.Job {
 
                         for (UserRoundDao userRound : list) {
                             userRound.setLot_num(lotNumber + "");
+                            userRound.setBlock_hash(blockHash);
+                            userRound.setLot_hash(lotHash);
                             LuckyUtil.LotteryResult lotRet = LuckyUtil.lotteryDice(userRound.getBet_num(), lotNumber + "");
                             userRound.setLot_type(lotRet.getResult());
                             if (lotRet.getResult() > 0 && lotRet.getResult() < 6) {
                                 userRound.setRwd_state(1);
                                 userRound.setLot_val((long)(userRound.getBet_val() * LuckyUtil.lotteryDiceOdds(lotRet.getResult())));
                             }
+                            userRound.setBet_state(10);
                             userRound.saveObj(true);
                         }
                     }

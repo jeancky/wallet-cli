@@ -293,18 +293,20 @@ public class LuckyUtil {
     }
 
     // 掷骰子结果
-    public static int getDiceNumberByBlock(String blockHash) {
+    public static String getDiceHashByBlock(String blockHash) {
         byte[] blockHashB = ByteArray.fromHexString(blockHash);
         byte[] saltB = ByteArray.fromHexString("119f4c5d7b7d8fd8be017c51868570c1cf1566dd6e2af4efee1ababe0eea9eaa");
 
         byte[] combine = new byte[blockHashB.length + saltB.length];
         System.arraycopy(saltB, 0, combine, 0, saltB.length);
         System.arraycopy(blockHashB, 0, combine, saltB.length, blockHashB.length);
-        String hash = Hex.toHexString(Hash.sha3(combine));
 
-        BigInteger bi = new BigInteger(hash, 16);
-        int result = bi.mod( new BigInteger("6")).intValue();
-        return result + 1;
+        return shortHex(Hash.sha3(combine));
+    }
+
+    private static String shortHex(byte[] string) {
+        String hexValue = Hex.toHexString(string).toUpperCase();
+        return hexValue.replaceFirst("^0+(?!$)", "");
     }
 
     public static double lotteryDiceOdds(int lotteryType) {

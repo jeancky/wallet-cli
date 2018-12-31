@@ -18,6 +18,7 @@ public class BlockDataDao extends BaseDao {
     private Timestamp c_t;
     private Timestamp u_t;
     private Integer state;
+    private String lot_hash;
 
     private final static int NORMAL_BLOCK_SEC = 3000;
 
@@ -25,7 +26,7 @@ public class BlockDataDao extends BaseDao {
     static {
         qs.put(KEY_TABLENAME, "m_block_data");
         qs.put(KEY_DBSELECTOR, new MySelect<>(new BlockDataDao()));
-        qs.put(KEY_COLUMNS, new String[]{"id", "b_h", "block_hash", "c_t", "u_t", "six_number", "state"});
+        qs.put(KEY_COLUMNS, new String[]{"id", "b_h", "block_hash", "c_t", "u_t", "six_number", "state", "lot_hash"});
     }
 
     public long saveObj(boolean autoUpdate) throws ApiException {
@@ -38,6 +39,7 @@ public class BlockDataDao extends BaseDao {
         obj.put("block_hash", dao.getBlock_hash());
         obj.put("result", dao.getSix_number());
         obj.put("t_x", dao.getC_t());
+        obj.put("lot_hash", dao.getLot_hash());
         return obj;
     }
 
@@ -117,5 +119,13 @@ public class BlockDataDao extends BaseDao {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public String getLot_hash() {
+        return lot_hash;
+    }
+
+    public void setLot_hash(String lot_hash) {
+        this.lot_hash = lot_hash;
     }
 }
