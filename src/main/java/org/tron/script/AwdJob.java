@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
 import org.tron.common.utils.AbiUtil;
 import org.tron.core.exception.CipherException;
-import org.tron.core.exception.EncodingException;
-import org.tron.keystore.StringUtils;
 import org.tron.walletserver.AutoClient;
 
 import java.io.IOException;
@@ -22,7 +20,7 @@ import java.util.*;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
-import static org.tron.script.OpenBlockTask.SIX_CONTRACT_ADDRESS;
+import static org.tron.script.OpenBlockJob.SIX_CONTRACT_ADDRESS;
 
 @DisallowConcurrentExecution
 public class AwdJob implements org.quartz.Job {
