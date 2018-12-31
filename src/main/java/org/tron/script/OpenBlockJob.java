@@ -32,7 +32,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class OpenBlockJob implements org.quartz.Job {
     private static final Logger logger = LoggerFactory.getLogger(AwdJob.class);
     private static final AutoClient cli = new AutoClient();
-    static final String SIX_CONTRACT_ADDRESS = "TPEsQJrMBGp31oEh8mvUZi96EyGMq2nysL";
+    static final String SIX_CONTRACT_ADDRESS = "TA7cbqZWfa4wEMrdEWvXLTmcY9dJ3XCamw";
 
     private static String shortHex(byte[] string) {
         String hexValue = Hex.toHexString(string).toUpperCase();
