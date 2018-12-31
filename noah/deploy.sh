@@ -1,6 +1,6 @@
 #! /bin/sh
 
-ROOT_RUNTIME="/www/tronyes/tronjar"
+ROOT_RUNTIME="/www/tronyes/reward"
 DIR_TODO="${ROOT_RUNTIME}/todo"
 
 HOSTNAME="47.107.153.157"

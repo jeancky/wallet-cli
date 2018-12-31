@@ -1,7 +1,7 @@
 #! /bin/sh
 
 CTIME=$(date +%Y%m%d%H%M)
-ROOT_RUNTIME="/www/tronyes/tronjar"
+ROOT_RUNTIME="/www/tronyes/reward"
 DIR_BACKUP="${ROOT_RUNTIME}/backup"
 DIR_TODO="${ROOT_RUNTIME}/todo"
 
@@ -16,7 +16,7 @@ if [ ! -f "${taskTodo}" ]; then
 	exit
 fi
 
-pid=`(ps -ef | grep ${QuartzTasks} | grep -v "grep") | awk '{print $2}'`
+pid=`(ps -ef | grep "${ROOT_RUNTIME}/${QuartzTasks}" | grep -v "grep") | awk '{print $2}'`
 echo "当前 QuartzTasks 进程: ${pid}"
 for id in $pid
 do
