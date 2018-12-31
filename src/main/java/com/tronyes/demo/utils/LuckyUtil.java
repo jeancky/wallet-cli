@@ -319,7 +319,7 @@ public class LuckyUtil {
     public static LotteryResult lotteryDice (String numberStr, String luckyStr) {
         LotteryResult result = new LotteryResult();
 
-        int number = Integer.parseInt(numberStr);
+        int number = Integer.parseInt(numberStr, 2);
         int lucky = Integer.parseInt(luckyStr);
 
         if (number <= 0 || number >= 0b111111 || lucky<= 0 || lucky > 6) {
