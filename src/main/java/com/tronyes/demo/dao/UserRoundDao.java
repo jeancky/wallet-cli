@@ -127,6 +127,7 @@ public class UserRoundDao extends BaseDao {
                 "rwd_state",
                 "rwd_t",
                 "rwd_err",
+                "rwd_retry",
                 "c_t",
                 "u_t",
                 "block_hash",

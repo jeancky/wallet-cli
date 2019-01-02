@@ -32,7 +32,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class OpenBlockJob implements org.quartz.Job {
     private static final Logger logger = LoggerFactory.getLogger(AwdJob.class);
     private static final AutoClient cli = new AutoClient();
-    static final String SIX_CONTRACT_ADDRESS = "TA7cbqZWfa4wEMrdEWvXLTmcY9dJ3XCamw";
+    static final String SIX_CONTRACT_ADDRESS = "TAJPM372tcjzGbCfGSSa3rYbaCMzJiqjPR";
 
     private static String shortHex(byte[] string) {
         String hexValue = Hex.toHexString(string).toUpperCase();
@@ -56,9 +56,12 @@ public class OpenBlockJob implements org.quartz.Job {
     }
 
     private static void openBlocks() {
-        try {
-            BlockDataDao block = BlockDataDao.getBlockWithEmptyHash();
-            if (block != null) {
+        while (true){
+            try {
+                BlockDataDao block = BlockDataDao.getBlockWithEmptyHash();
+                if (block == null) {
+                    break;
+                }
                 String params = String.format("%d", block.getB_h());
                 byte[] input = Hex.decode(AbiUtil.parseMethod("getBlockHash(uint256)", params, false));
                 GrpcAPI.TransactionExtention transactionExtention = (GrpcAPI.TransactionExtention) cli.triggerContract(SIX_CONTRACT_ADDRESS, 0, input, 20000000, 0, null);
@@ -100,9 +103,9 @@ public class OpenBlockJob implements org.quartz.Job {
                         }
                     }
                 }
+            } catch (ApiException | EncodingException e) {
+                logger.warn(e.getMessage());
             }
-        } catch (ApiException | EncodingException e) {
-            logger.warn(e.getMessage());
         }
     }
 
@@ -128,7 +131,7 @@ public class OpenBlockJob implements org.quartz.Job {
         try {
             loadWallet(6,"Star@2018");
             openBlocks();
-        }catch (CipherException | IOException | ApiException e){
+        }catch (Exception e){
             logger.warn("exit with " + e.toString());
         }
     }

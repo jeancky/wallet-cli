@@ -20,7 +20,7 @@ public class BlockDataDao extends BaseDao {
     private Integer state;
     private String lot_hash;
 
-    private final static int NORMAL_BLOCK_SEC = 3000;
+    private final static int NORMAL_BLOCK_SEC = 3500;
 
     protected static Map<String, Object> qs = new HashMap<>();
     static {

@@ -5,7 +5,6 @@ import com.tronyes.nettyrest.mysql.BaseDao;
 import com.tronyes.nettyrest.mysql.MySelect;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,12 +16,20 @@ public class UserDao extends BaseDao {
     private Long lucky_h;
     private Long lucky_m;
     private Long lucky_l;
-    private Integer state;
     private Integer rtype;
+    private Integer state;
 
     private Long total_bet;
     private Long total_reward;
     private Long round_count;
+
+    private Integer game_type;
+    private Long six_total_bet;
+    private Long six_total_reward;
+    private Long six_round_count;
+
+    private Long token_all;
+    private Long token_frozen;
 
     private Timestamp c_t;
     private Timestamp u_t;
@@ -63,7 +70,24 @@ public class UserDao extends BaseDao {
     static {
         qs.put(KEY_TABLENAME, "m_user");
         qs.put(KEY_DBSELECTOR, new MySelect<>(new UserDao()));
-        qs.put(KEY_COLUMNS, new String[]{"id", "nick", "address", "lucky_h", "lucky_l", "lucky_m", "state", "rtype", "total_bet", "total_reward", "round_count", "c_t", "u_t"});
+        qs.put(KEY_COLUMNS, new String[]{"id",
+            "nick",
+            "address",
+            "lucky_h",
+            "lucky_l",
+            "lucky_m",
+            "rtype",
+            "state",
+            "total_bet",
+            "total_reward",
+            "round_count",
+            "game_type",
+            "six_total_bet",
+            "six_total_reward",
+            "six_round_count",
+            "token_all",
+            "token_frozen",
+            "c_t", "u_t",});
     }
 
     public Long getId() {
@@ -174,12 +198,62 @@ public class UserDao extends BaseDao {
         return this;
     }
 
+    public Integer getGame_type() {
+        return game_type;
+    }
+
+    public void setGame_type(Integer game_type) {
+        this.game_type = game_type;
+    }
+
+    public Long getSix_total_bet() {
+        return six_total_bet;
+    }
+
+    public void setSix_total_bet(Long six_total_bet) {
+        this.six_total_bet = six_total_bet;
+    }
+
+    public Long getSix_total_reward() {
+        return six_total_reward;
+    }
+
+    public void setSix_total_reward(Long six_total_reward) {
+        this.six_total_reward = six_total_reward;
+    }
+
+    public Long getSix_round_count() {
+        return six_round_count;
+    }
+
+    public void setSix_round_count(Long six_round_count) {
+        this.six_round_count = six_round_count;
+    }
+
     public Integer getRtype() {
         return rtype;
     }
 
     public UserDao setRtype(Integer rtype) {
         this.rtype = rtype;
+        return this;
+    }
+
+    public Long getToken_all() {
+        return token_all;
+    }
+
+    public UserDao setToken_all(Long token_all) {
+        this.token_all = token_all;
+        return this;
+    }
+
+    public Long getToken_frozen() {
+        return token_frozen;
+    }
+
+    public UserDao setToken_frozen(Long token_frozen) {
+        this.token_frozen = token_frozen;
         return this;
     }
 }
