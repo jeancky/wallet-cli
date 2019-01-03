@@ -53,6 +53,7 @@ public class BlockDataDao extends BaseDao {
     public static List<BlockDataDao> getLastList() throws ApiException {
         Map<String, Object> conds = new HashMap<>();
         conds.put("block_hash != ", "");
+        conds.put("state != ", -1);
         return getList(qs, conds, "b_h DESC", 50);
     }
 
