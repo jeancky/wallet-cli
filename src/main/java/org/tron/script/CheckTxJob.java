@@ -58,7 +58,7 @@ public class CheckTxJob implements org.quartz.Job {
                 if (result.isPresent()
                     && result.get().getResult().equals(TransactionInfo.code.SUCESS)
                     && result.get().getContractResultCount() > 0
-                    && Long.parseLong(ByteArray.toHexString(result.get().getContractResult(0).toByteArray()), 16) == 1) {
+                    && Long.parseLong(ByteArray.toHexString(result.get().getContractResult(0).toByteArray()), 16) > 0) {
                     values.put("rwd_state", 3);
                 } else {
                     logger.info("getTransactionInfoById " + dao.getLot_tx() + " failed !!");

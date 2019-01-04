@@ -138,7 +138,7 @@ public class AutoClient {
         return rpcCli.broadcastTransaction(transaction)? txId : null;
     }
 
-    public String triggerContract(String contractAddr, long callValue, byte[] data, long feeLimit, long tokenValue, String tokenId) {
+    public Object triggerContract(String contractAddr, long callValue, byte[] data, long feeLimit, long tokenValue, String tokenId) {
 
         Contract.TriggerSmartContract.Builder builder = Contract.TriggerSmartContract.newBuilder();
         builder.setOwnerAddress(ByteString.copyFrom(address));
@@ -163,7 +163,7 @@ public class AutoClient {
             byte[] result = transactionExtention.getConstantResult(0).toByteArray();
             logger.info("message:" + transaction.getRet(0).getRet() + "\n" + ByteArray.toStr(transactionExtention.getResult().getMessage().toByteArray()));
             logger.info("Result:" + Hex.toHexString(result));
-            return ByteArray.toHexString(transactionExtention.getTxid().toByteArray());
+            return transactionExtention;
         }
 
         TransactionExtention.Builder texBuilder = TransactionExtention.newBuilder();
@@ -243,7 +243,7 @@ public class AutoClient {
             cli.loadWalletDao(dao,"Star@2018@goole&112358");
 
             byte[] input = Hex.decode(AbiUtil.parseMethod("doBet(bytes32,uint256)", "\"19c6aa9f0ae2e92c94edb51207351ff57f6def64975c643fdc3cd7f69970624d\",100", false));
-            String txId = cli.triggerContract("TQy3pheSHVUHuxGLdkhp2H7yhJbsqUiiBn", 10, input, 30000000, 0, null);
+            String txId = (String) cli.triggerContract("TQy3pheSHVUHuxGLdkhp2H7yhJbsqUiiBn", 10, input, 30000000, 0, null);
 
             Optional<TransactionInfo> result = cli.getTransactionInfoById(txId);
             if (result.isPresent()) {

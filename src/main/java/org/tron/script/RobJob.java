@@ -105,7 +105,7 @@ public class RobJob {
         }};
 
         byte[] input = AbiUtil.parseMethod("doBet(bytes32,uint256)", params, false);
-        String txId = cli.triggerContract(LottoContract, betValue, input, 30000000, 0, null);
+        String txId = (String) cli.triggerContract(LottoContract, betValue, input, 30000000, 0, null);
         if (txId == null){
             throw new ApiException(StatusCode.SCPT_PAY_ERR);
         }

@@ -14,7 +14,7 @@ import java.util.Map;
 public class UserRoundDao extends BaseDao {
 
     private Long id;
-    private Long gr_id;
+    private Long gr_id;     // 彩票 - roundid，筛子 - 区块高度
     private Long u_id;
     private Integer type;
     private Integer rtype;
@@ -24,7 +24,7 @@ public class UserRoundDao extends BaseDao {
     private Long bet_val;
     private String bet_tx;
     private String bet_num;
-    private Integer lot_type; // 0: 未中奖，123等奖
+    private Integer lot_type; // 彩票 - 0: 未中奖，123等奖 筛子 - 0：没中，1 - 5：x投1中
     private String lot_tx;
     private Long lot_val;
     private String lot_num;
@@ -34,6 +34,8 @@ public class UserRoundDao extends BaseDao {
     private Integer rwd_retry;
     private Timestamp c_t;
     private Timestamp u_t;
+    private String block_hash;
+    private String lot_hash;
 
     public long saveObj(boolean autoUpdate) throws ApiException {
         return super.saveObj(qs, autoUpdate);
@@ -69,11 +71,67 @@ public class UserRoundDao extends BaseDao {
         return getOne(qs, iid);
     }
 
+    public static Map<String, Object> packageUserRound(UserRoundDao dao) {
+        Map<String, Object> obj = new HashMap<>();
+        obj.put("gr_id", dao.getGr_id());
+        obj.put("uid", dao.getU_id());
+        obj.put("addr", dao.getAddress());
+        obj.put("bet_val", dao.getBet_val());
+        obj.put("bet_id", dao.getBet_id());
+        obj.put("bet", dao.getBet_num());
+        obj.put("state", dao.getBet_state());
+        obj.put("lottery", dao.getLot_type());
+        obj.put("lot_val", dao.getLot_val());
+        obj.put("result", dao.getLot_num());
+        obj.put("rwd_state", dao.getRwd_state());
+        obj.put("ts", dao.getC_t());
+        return obj;
+    }
+
+    public static Map<String, Object> packageSixUserRound(UserRoundDao round) {
+        Map<String, Object> obj = new HashMap<>();
+        obj.put("rid", round.getId());
+        obj.put("bet", round.getBet_num());
+        obj.put("bet_amount", round.getBet_val());
+        obj.put("win_amount", round.getLot_val());
+        obj.put("type", round.getBet_state());
+        obj.put("win_type", round.getLot_type());
+        obj.put("b_h", round.getGr_id());
+        obj.put("result", round.getLot_num());
+        obj.put("address", round.getAddress());
+        obj.put("block_hash", round.getBlock_hash());
+        obj.put("lot_hash", round.getLot_hash());
+        obj.put("c_t", round.getC_t());
+        obj.put("bet_id", round.getBet_id());
+        return obj;
+    }
+
     protected static Map<String, Object> qs = new HashMap<>();
     static {
         qs.put(KEY_TABLENAME, "m_user_round");
         qs.put(KEY_DBSELECTOR, new MySelect<>(new UserRoundDao()));
-        qs.put(KEY_COLUMNS, new String[]{"id", "gr_id", "u_id", "type", "rtype", "address", "bet_state", "bet_id", "bet_val", "bet_tx", "lot_type", "lot_tx", "lot_val", "bet_num", "lot_num", "rwd_state", "rwd_t", "rwd_err", "rwd_retry", "c_t", "u_t"});
+        qs.put(KEY_COLUMNS, new String[]{"id",
+                "gr_id",
+                "u_id",
+                "type",
+                "address",
+                "bet_state",
+                "bet_id",
+                "bet_val",
+                "bet_tx",
+                "lot_type",
+                "lot_tx",
+                "lot_val",
+                "bet_num",
+                "lot_num",
+                "rwd_state",
+                "rwd_t",
+                "rwd_err",
+                "rwd_retry",
+                "c_t",
+                "u_t",
+                "block_hash",
+                "lot_hash"});
     }
 
     //////////////////////////////
@@ -229,8 +287,8 @@ public class UserRoundDao extends BaseDao {
         this.rwd_t = rwd_t;
         return this;
     }
-	
-	    public Integer getType() {
+
+    public Integer getType() {
         return type;
     }
 
@@ -238,7 +296,7 @@ public class UserRoundDao extends BaseDao {
         this.type = type;
         return this;
     }
-	
+
 
     public Timestamp getU_t() {
         return u_t;
@@ -246,6 +304,24 @@ public class UserRoundDao extends BaseDao {
 
     public UserRoundDao setU_t(Timestamp u_t) {
         this.u_t = u_t;
+        return this;
+    }
+
+    public String getBlock_hash() {
+        return block_hash;
+    }
+
+    public UserRoundDao setBlock_hash(String block_hash) {
+        this.block_hash = block_hash;
+        return this;
+    }
+
+    public String getLot_hash() {
+        return lot_hash;
+    }
+
+    public UserRoundDao setLot_hash(String log_hash) {
+        this.lot_hash = log_hash;
         return this;
     }
 

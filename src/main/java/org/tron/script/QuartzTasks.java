@@ -9,6 +9,10 @@ public class QuartzTasks {
         // Grab the Scheduler instance from the Factory
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
+        scheduler.scheduleJob(
+                OpenBlockJob.getJobDetail("OpenBlockJob", "every_1_sec"),
+                OpenBlockJob.getTrigger("OpenBlockJobTrigger", "every_1_sec"));
+
         // Tell quartz to schedule the job using our trigger
         scheduler.scheduleJob(
                 AwdJob.getJobDetail("AwdJob", "every_1_sec"),
